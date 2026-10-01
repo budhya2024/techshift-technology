@@ -71,7 +71,7 @@ const Footer = () => {
               {[
                 { href: "/", label: "Home" },
                 { href: "/about", label: "About Us" },
-                { href: "/careers", label: "Careers" },
+                { href: "/portfolio", label: "Portfolio" },
                 { href: "/contact", label: "Contact" },
                 { href: "/privacy-policy", label: "Privacy Policy" },
               ].map((item) => (
@@ -93,11 +93,11 @@ const Footer = () => {
             </h3>
             <ul className="space-y-3">
               {[
-                { href: "/services", label: "Web Development" },
-                { href: "/services", label: "Mobile Apps" },
-                { href: "/services", label: "Digital Marketing" },
-                { href: "/services", label: "E-commerce" },
-                { href: "/services", label: "UI/UX Design" },
+                { href: "/#services", label: "Web Development" },
+                { href: "/#services", label: "Mobile Apps" },
+                { href: "/#services", label: "Digital Marketing" },
+                { href: "/#services", label: "E-commerce" },
+                { href: "/#services", label: "UI/UX Design" },
                 { href: "/portfolio", label: "Portfolio" },
               ].map((item, i) => (
                 <li key={i}>

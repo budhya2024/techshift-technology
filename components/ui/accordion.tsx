@@ -50,11 +50,11 @@ function AccordionTrigger({
         {children}
         <span
           data-slot="accordion-trigger-icon"
-          className="pointer-events-none ml-3 shrink-0 flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-red-500 text-white text-lg sm:text-xl font-bold leading-none select-none group-aria-expanded/accordion-trigger:hidden"
+          className="pointer-events-none ml-3 shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-black border border-zinc-700 text-red-500 group-hover/accordion-trigger:border-red-500 text-lg font-bold leading-none select-none group-aria-expanded/accordion-trigger:hidden"
         >+</span>
         <span
           data-slot="accordion-trigger-icon"
-          className="pointer-events-none ml-3 shrink-0 hidden items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-red-500 text-white text-lg sm:text-xl font-bold leading-none select-none group-aria-expanded/accordion-trigger:flex"
+          className="pointer-events-none ml-3 shrink-0 hidden items-center justify-center w-8 h-8 rounded-full bg-red-700 text-white text-lg font-bold leading-none select-none group-aria-expanded/accordion-trigger:flex"
         >−</span>
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>

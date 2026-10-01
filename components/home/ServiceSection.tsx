@@ -21,37 +21,37 @@ const DEFAULT_SERVICES: Service[] = [
   {
     title: "Shopify Development",
     description: "Custom Shopify e-commerce storefronts, custom theme building, app integrations, and checkout conversion optimization.",
-    link: "/services/shopify-development",
+    link: "/contact",
     bgImage: "https://images.unsplash.com/photo-1556742049-0a67cf6004b1?q=80&w=800&auto=format&fit=crop",
   },
   {
     title: "Mobile App Development",
     description: "Native and cross-platform mobile applications for iOS and Android built with React Native and Flutter.",
-    link: "/services/mobile-apps",
+    link: "/contact",
     bgImage: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=800&auto=format&fit=crop",
   },
   {
     title: "Website Development",
     description: "Modern, high-performance, and responsive web applications built with Next.js, React, and cutting-edge frontend architectures.",
-    link: "/services/web-development",
+    link: "/contact",
     bgImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
   },
   {
     title: "Digital Marketing",
     description: "Strategic SEO optimization, targeted Google & Meta ad campaigns, social media marketing, and brand growth strategies.",
-    link: "/services/digital-marketing",
+    link: "/contact",
     bgImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop",
   },
   {
     title: "AI Solutions",
     description: "Smart AI integration, custom LLM chatbots, automated workflow intelligence, and predictive business data analytics.",
-    link: "/services/ai-solutions",
+    link: "/contact",
     bgImage: "https://images.unsplash.com/photo-1677442136019-21780efad99a?q=80&w=800&auto=format&fit=crop",
   },
   {
     title: "Cloud & DevOps",
     description: "Scalable cloud infrastructure, automated CI/CD deployment pipelines, containerization, and server security setups.",
-    link: "/services/cloud",
+    link: "/contact",
     bgImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop",
   }
 ];
@@ -179,13 +179,10 @@ export default function ServiceSection({
                                 e.stopPropagation();
                                 router.push(service.link);
                               }}
-                              className="relative inline-flex items-center gap-2 px-6 py-3 bg-red-500 text-white text-sm font-bold rounded-xl overflow-hidden group/btn transition-all duration-700 ease-out cursor-pointer"
+                              className="inline-flex items-center gap-2 px-6 py-3 bg-red-700 hover:bg-red-800 text-white text-sm font-bold rounded-xl transition-colors duration-300 group/btn cursor-pointer"
                             >
-                              <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 rounded-full bg-red-700 group-hover/btn:w-[380%] group-hover/btn:h-[380%] transition-all duration-700 ease-in-out z-0 pointer-events-none" />
-                              <span className="relative z-10 flex items-center gap-2">
-                                <span>Explore Service</span>
-                                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                              </span>
+                              <span>Explore Service</span>
+                              <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
                             </button>
                           </div>
                         </div>
