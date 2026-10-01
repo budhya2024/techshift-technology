@@ -48,7 +48,7 @@ export const Header = ({ currentPage }: NavigationProps) => {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="relative inline-flex items-center justify-center bg-red-500 text-white text-sm font-bold px-6 py-2.5 rounded-xl overflow-hidden group shadow-lg shadow-red-500/20 transition-all duration-700 ease-out"
+                                    className="relative inline-flex items-center justify-center bg-red-500 text-white text-sm font-bold px-6 py-2.5 rounded-xl overflow-hidden group transition-all duration-700 ease-out"
                                 >
                                     {/* Slow & Smooth Center Circular Expanding Fill */}
                                     <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 rounded-full bg-red-700 group-hover:w-[380%] group-hover:h-[380%] transition-all duration-700 ease-in-out z-0 pointer-events-none" />
@@ -98,7 +98,7 @@ export const Header = ({ currentPage }: NavigationProps) => {
                                 key={link.href}
                                 href={link.href}
                                 onClick={() => setMobileMenuOpen(false)}
-                                className={`relative inline-flex items-center justify-center mt-4 bg-red-500 text-white font-bold text-base px-10 py-3.5 rounded-xl uppercase tracking-wider overflow-hidden group shadow-xl shadow-red-500/20 transition-all duration-700 ease-out ${
+                                className={`relative inline-flex items-center justify-center mt-4 bg-red-500 text-white font-bold text-base px-10 py-3.5 rounded-xl uppercase tracking-wider overflow-hidden group transition-all duration-700 ease-out ${
                                     mobileMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                                 }`}
                                 style={{ transitionDelay: `${index * 80}ms` }}

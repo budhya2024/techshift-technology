@@ -179,7 +179,7 @@ export default function ServiceSection({
                                 e.stopPropagation();
                                 router.push(service.link);
                               }}
-                              className="relative inline-flex items-center gap-2 px-6 py-3 bg-red-500 text-white text-sm font-bold rounded-xl overflow-hidden group/btn shadow-md transition-all duration-700 ease-out cursor-pointer"
+                              className="relative inline-flex items-center gap-2 px-6 py-3 bg-red-500 text-white text-sm font-bold rounded-xl overflow-hidden group/btn transition-all duration-700 ease-out cursor-pointer"
                             >
                               <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 rounded-full bg-red-700 group-hover/btn:w-[380%] group-hover/btn:h-[380%] transition-all duration-700 ease-in-out z-0 pointer-events-none" />
                               <span className="relative z-10 flex items-center gap-2">

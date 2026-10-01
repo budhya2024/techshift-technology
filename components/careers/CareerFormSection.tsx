@@ -135,7 +135,7 @@ export default function CareerFormSection({
                         {isModal && onClose && (
                             <button
                                 onClick={onClose}
-                                className="px-6 py-3.5 rounded-2xl bg-red-500 text-white text-sm font-bold shadow-lg shadow-red-500/25 hover:bg-red-600 transition-colors cursor-pointer"
+                                className="px-6 py-3.5 rounded-2xl bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition-colors cursor-pointer"
                             >
                                 Done & Close
                             </button>
@@ -288,7 +288,7 @@ export default function CareerFormSection({
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="relative w-full inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-red-500 text-white font-bold text-base shadow-xl shadow-red-500/30 overflow-hidden group transition-all duration-700 ease-out disabled:opacity-50 cursor-pointer"
+                            className="relative w-full inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-red-500 text-white font-bold text-base overflow-hidden group transition-all duration-700 ease-out disabled:opacity-50 cursor-pointer"
                         >
                             {/* Center Circular Expanding Fill Animation */}
                             <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 rounded-full bg-red-700 group-hover:w-[380%] group-hover:h-[380%] transition-all duration-700 ease-in-out z-0 pointer-events-none" />

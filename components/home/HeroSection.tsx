@@ -126,7 +126,7 @@ export default function HeroSection() {
             <div className="container relative z-20 max-w-4xl mx-auto text-center px-4">
 
                 {/* Client / Team Metrics Badge */}
-                <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 shadow-lg mb-8 transition-transform hover:scale-105">
+                <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 shadow-lg mb-8 transition-transform">
                     {/* Overlapping Avatars */}
                     <div className="flex -space-x-2 overflow-hidden">
                         <img
@@ -165,7 +165,7 @@ export default function HeroSection() {
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
                     <Link
                         href="/contact"
-                        className="relative w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-red-500 text-white font-bold text-sm sm:text-base tracking-wide shadow-2xl shadow-red-500/30 overflow-hidden group transition-all duration-700 ease-out transform hover:-translate-y-0.5 active:translate-y-0 text-center"
+                        className="relative w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-red-500 text-white font-bold text-sm sm:text-base tracking-wide overflow-hidden group transition-all duration-700 ease-out transform hover:-translate-y-0.5 active:translate-y-0 text-center"
                     >
                         {/* Slow & Smooth Expanding Circular Fill from Center */}
                         <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 rounded-full bg-red-700 group-hover:w-[380%] group-hover:h-[380%] transition-all duration-700 ease-in-out z-0 pointer-events-none" />
@@ -174,7 +174,7 @@ export default function HeroSection() {
 
                     <Link
                         href="/work"
-                        className="relative w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-zinc-900 text-white font-bold text-sm sm:text-base tracking-wide border border-zinc-800 shadow-xl overflow-hidden group transition-all duration-700 ease-out text-center"
+                        className="relative w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-zinc-900 text-white font-bold text-sm sm:text-base tracking-wide border border-zinc-800 overflow-hidden group transition-all duration-700 ease-out text-center"
                     >
                         {/* Slow & Smooth Expanding Circular Fill from Center */}
                         <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 rounded-full bg-red-500 group-hover:w-[380%] group-hover:h-[380%] transition-all duration-700 ease-in-out z-0 pointer-events-none" />

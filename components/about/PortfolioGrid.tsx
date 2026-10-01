@@ -188,7 +188,7 @@ export default function PortfolioGrid() {
                         Have a project in mind? Let's build something amazing together.
                     </p>
                     <a href="/contact">
-                        <button className="relative inline-flex items-center gap-2 bg-red-500 text-white font-bold text-base px-8 py-4 rounded-2xl overflow-hidden group shadow-xl shadow-red-500/25 transition-all duration-700 ease-out">
+                        <button className="relative inline-flex items-center gap-2 bg-red-500 text-white font-bold text-base px-8 py-4 rounded-2xl overflow-hidden group transition-all duration-700 ease-out">
                             <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 rounded-full bg-red-700 group-hover:w-[380%] group-hover:h-[380%] transition-all duration-700 ease-in-out z-0 pointer-events-none" />
                             <span className="relative z-10 flex items-center gap-2">
                                 Start Your Project <FiArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
