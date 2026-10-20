@@ -177,6 +177,7 @@
 /* Reusable section heading container spacing */
 .sec-header {
   margin-bottom: 1.5rem;
+  padding-inline: .5rem;
   /* mb-6 mobile */
 }
 
@@ -600,8 +601,8 @@
 
 .hero-section .cta-button {
   display: inline-block;
-  padding: 15px 35px;
-  font-size: 1rem;
+  padding: 10px 20px;
+  font-size: 12px;
   font-weight: 600;
   color: #fff;
   text-decoration: none;
@@ -611,10 +612,24 @@
   transition: all 0.3s ease-in-out;
 }
 
+@media (min-width: 640px) {
+  .hero-section .cta-button {
+    padding: 15px 35px;
+    font-size: 1rem;
+  }
+}
+
 .hero-section .cta-button:hover {
   background-color: red;
   color: #fff;
   transform: translateY(-3px);
   box-shadow: 0 10px 20px rgba(169, 222, 249, 0.2);
+}
 
+/* Form input focus styling: remove jarring outlines/rings, show clean crisp border */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }

@@ -16,7 +16,7 @@ export default function HeroSection() {
         <section className="relative w-full min-h-[90vh] lg:min-h-[92vh] flex items-center justify-center bg-black text-white overflow-hidden py-16 md:py-24">
 
             {/* Background Orbital Rings with Revolving Tech Badges */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 overflow-hidden">
+            <div className="hidden sm:flex absolute inset-0 items-center justify-center pointer-events-none z-10 overflow-hidden">
 
                 {/* Ring 1 - Inner Orbit spinning Clockwise (Next.js, React, Node.js, ChatGPT) */}
                 <div
@@ -121,38 +121,14 @@ export default function HeroSection() {
                 <div className="w-[550px] h-[550px] bg-red-600/10 rounded-full blur-3xl absolute pointer-events-none" />
             </div>
 
-
             {/* Central Hero Content */}
-            <div className="container relative z-20 max-w-4xl mx-auto text-center px-4">
+            <div className="container relative z-20 max-w-4xl mx-auto text-center px-4 ">
 
-                {/* Client / Team Metrics Badge */}
-                <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 shadow-lg mb-8 transition-transform">
-                    {/* Overlapping Avatars */}
-                    <div className="flex -space-x-2 overflow-hidden">
-                        <img
-                            className="inline-block h-6 w-6 rounded-full ring-2 ring-zinc-900 object-cover"
-                            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"
-                            alt="Team member 1"
-                        />
-                        <img
-                            className="inline-block h-6 w-6 rounded-full ring-2 ring-zinc-900 object-cover"
-                            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80"
-                            alt="Team member 2"
-                        />
-                        <img
-                            className="inline-block h-6 w-6 rounded-full ring-2 ring-zinc-900 object-cover"
-                            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80"
-                            alt="Team member 3"
-                        />
-                    </div>
-                    <span className="text-xs font-semibold text-white">
-                        500+ <span className="text-zinc-400 font-normal">(happy clients)</span>
-                    </span>
-                </div>
+                <p className="text-sm bg-white/20  text-white border border-white/20 rounded-full px-5 py-2 w-fit mx-auto mb-5 font-semibold tracking-wider">Techshift Technology</p>
 
                 {/* Main Headline */}
                 <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white leading-[1.08] mb-6">
-                    Create better, <br className="hidden sm:inline" />
+                    Create better, <br />
                     faster, and together
                 </h1>
 
@@ -162,17 +138,17 @@ export default function HeroSection() {
                 </p>
 
                 {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
+                <div className="flex items-center justify-center gap-3 sm:gap-5">
                     <Link
                         href="/contact"
-                        className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-red-700 hover:bg-red-800 text-white font-bold text-sm sm:text-base tracking-wide transition-colors duration-300 text-center"
+                        className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl bg-red-700 hover:bg-red-800 text-white font-bold text-xs sm:text-base tracking-wide transition-colors duration-300 text-center"
                     >
                         Get Started
                     </Link>
 
                     <Link
                         href="/work"
-                        className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-sm sm:text-base tracking-wide border border-zinc-800 transition-colors duration-300 text-center"
+                        className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs sm:text-base tracking-wide border border-zinc-800 transition-colors duration-300 text-center"
                     >
                         See Demo
                     </Link>

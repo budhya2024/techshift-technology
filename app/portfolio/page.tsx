@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import Header from "@/components/shared/Hader";
 import PortfolioGrid from "@/components/about/PortfolioGrid";
 import Footer from "@/components/shared/Footer";
+import CtaSection from "@/components/home/CtaSection";
 
 export const metadata: Metadata = {
   title: "Portfolio | Techshift Technology",
@@ -20,6 +21,7 @@ export default function PortfolioPage() {
         description="Explore our successful projects and see how we've helped businesses transform their ideas into reality."
       />
       <PortfolioGrid />
+      <CtaSection />
       <Footer />
     </main>
   );

@@ -62,7 +62,7 @@ const industries = [
 
 export default function AboutContent() {
     return (
-        <div className="bg-[#070b10] text-white">
+        <div className="bg-[#070b10] text-white mb-8 md:mb-16">
 
             {/* ── 1. Founding Story & Metrics Section ── */}
             <section className="py-7 md:py-14 border-b border-gray-800/60">
@@ -160,28 +160,6 @@ export default function AboutContent() {
                 </div>
             </section>
 
-            {/* ── 3. Call to Action Banner ── */}
-            <section className="py-7 md:py-14 bg-[#070b10]">
-                <div className="container">
-                    <div className="bg-gradient-to-r from-black via-[#0d131c] to-black border border-gray-800 rounded-lg p-8 md:p-14 text-center">
-                        <h2 className="sec-title text-white mb-4">
-                            Ready to Transform Your Business?
-                        </h2>
-                        <p className="sec-desc text-gray-300 mx-auto mb-8">
-                            Partner with TechShift Technology and build scalable digital products that drive real revenue.
-                        </p>
-                        <div className="flex justify-center">
-                            <Link
-                                href="/contact"
-                                className="inline-flex items-center justify-center gap-2 bg-red-700 hover:bg-red-800 text-white font-bold text-base px-8 py-4 rounded-2xl transition-colors duration-300 group"
-                            >
-                                <span>Get In Touch</span>
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
         </div>
     );

@@ -82,7 +82,7 @@ export const Header = ({ currentPage }: NavigationProps) => {
                             key={link.href}
                             href={link.href}
                             onClick={() => setMobileMenuOpen(false)}
-                            className={`relative text-2xl font-semibold px-6 py-2 group transition-all duration-300 ${
+                            className={`relative text-[16px] font-semibold px-6 py-2.5 group transition-all duration-300 ${
                                 isCurrentPage(link.href) ? "text-red-500" : "text-foreground hover:text-red-500"
                             } ${mobileMenuOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`}
                             style={{ transitionDelay: `${index * 80}ms` }}

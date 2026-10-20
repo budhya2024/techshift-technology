@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { FiPhone, FiMail, FiClock, FiMessageCircle, FiSend, FiUser, FiBriefcase } from "react-icons/fi";
 
+import { addContactLead } from "@/lib/contactStore";
+
 interface FormData {
     firstName: string;
     lastName: string;
@@ -58,8 +60,19 @@ export default function ContactForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate form submission
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        try {
+            addContactLead({
+                type: "contact",
+                name: `${formData.firstName} ${formData.lastName}`.trim() || "Anonymous",
+                email: formData.email,
+                phone: formData.phone,
+                company: formData.company,
+                message: formData.message,
+            });
+        } catch (err) {
+            console.error("Error saving contact lead:", err);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 800));
         setLoading(false);
         setSubmitted(true);
     };
@@ -259,7 +272,7 @@ export default function ContactForm() {
                                             id="submit-contact"
                                             type="submit"
                                             disabled={loading}
-                                            className="w-full inline-flex items-center justify-center gap-2 bg-red-700 hover:bg-red-800 text-white font-bold text-base px-8 py-4 rounded-2xl transition-colors duration-300 disabled:opacity-60 cursor-pointer"
+                                            className="w-full inline-flex items-center justify-center gap-2 bg-red-700 hover:bg-red-800 text-white font-bold text-xs sm:text-base px-4 py-2.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl transition-colors duration-300 disabled:opacity-60 cursor-pointer"
                                         >
                                             <span className="relative z-10 flex items-center justify-center gap-2">
                                                 {loading ? (

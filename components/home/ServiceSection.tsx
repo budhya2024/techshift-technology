@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { getStoredServices } from "@/lib/serviceStore";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -62,12 +63,22 @@ interface ServiceSectionProps {
 }
 
 export default function ServiceSection({
-  services = DEFAULT_SERVICES,
+  services,
   servicesRef,
 }: ServiceSectionProps) {
   const router = useRouter();
   const prevRef = useRef<HTMLButtonElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
+  const [items, setItems] = useState<Service[]>(services || DEFAULT_SERVICES);
+
+  useEffect(() => {
+    if (!services) {
+      setItems(getStoredServices());
+      const handleUpdate = () => setItems(getStoredServices());
+      window.addEventListener("services_updated", handleUpdate);
+      return () => window.removeEventListener("services_updated", handleUpdate);
+    }
+  }, [services]);
 
   return (
     <section
@@ -88,7 +99,7 @@ export default function ServiceSection({
           </div>
 
           {/* Navigation Controls */}
-          <div className="flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-3">
             <button
               ref={prevRef}
               aria-label="Previous Slide"
@@ -134,7 +145,7 @@ export default function ServiceSection({
             }}
             className="w-full py-2"
           >
-            {services.map((service, index) => (
+            {items.map((service, index) => (
               <SwiperSlide key={index} className="h-auto">
                 {({ isActive }) => (
                   <div
@@ -144,13 +155,17 @@ export default function ServiceSection({
                   >
                     {/* Background Image with Gradient Overlay */}
                     <div className="absolute inset-0 w-full h-full z-0">
-                      <Image
-                        src={service.bgImage}
-                        alt={service.title}
-                        fill
-                        className={`object-cover object-center transform transition-transform duration-700 ${isActive ? "opacity-50 scale-105" : "opacity-35 group-hover:opacity-50 group-hover:scale-105"
-                          }`}
-                      />
+                      {service.bgImage ? (
+                        <Image
+                          src={service.bgImage}
+                          alt={service.title}
+                          fill
+                          className={`object-cover object-center transform transition-transform duration-700 ${isActive ? "opacity-50 scale-105" : "opacity-35 group-hover:opacity-50 group-hover:scale-105"
+                            }`}
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-[#0d131c]" />
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-[#060a0f] via-[#060a0f]/85 to-transparent" />
                     </div>
 
@@ -179,10 +194,10 @@ export default function ServiceSection({
                                 e.stopPropagation();
                                 router.push(service.link);
                               }}
-                              className="inline-flex items-center gap-2 px-6 py-3 bg-red-700 hover:bg-red-800 text-white text-sm font-bold rounded-xl transition-colors duration-300 group/btn cursor-pointer"
+                              className="inline-flex items-center gap-1.5 px-3.5 py-2 sm:px-6 sm:py-3 bg-red-700 hover:bg-red-800 text-white text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl transition-colors duration-300 group/btn cursor-pointer"
                             >
                               <span>Explore Service</span>
-                              <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                              <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
                             </button>
                           </div>
                         </div>

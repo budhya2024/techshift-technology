@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import Header from "@/components/shared/Hader";
 import AboutContent from "@/components/about/AboutContent";
 import Footer from "@/components/shared/Footer";
+import CtaSection from "@/components/home/CtaSection";
 
 export const metadata: Metadata = {
   title: "About Us | Techshift Technology",
@@ -20,6 +21,7 @@ export default function AboutPage() {
         description="We are a next-generation digital solutions company dedicated to empowering businesses with bold, cutting-edge technology."
       />
       <AboutContent />
+
       <Footer />
     </main>
   );

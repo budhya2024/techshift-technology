@@ -24,7 +24,7 @@ export const PageHeader = ({
 
       {/* Red Overlay Gradient */}
       <div className="absolute inset-0 z-0 bg-gradient-to-r from-black-900/95 via-black-800/90 to-black-900/80 mix-blend-multiply" />
-      <div className="absolute inset-0 z-0 bg-[#5C0A0A]/60" />
+      <div className="absolute inset-0 z-0 bg-black/60" />
 
       {/* Content */}
       <div className="container relative z-10">

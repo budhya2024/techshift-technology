@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { addContactLead } from "@/lib/contactStore";
 import {
     Accordion,
     AccordionContent,
@@ -60,6 +61,17 @@ export default function FaqSection() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+        try {
+            addContactLead({
+                type: "faq",
+                name: formData.name || "Anonymous",
+                email: formData.email,
+                phone: formData.phone,
+                message: formData.question,
+            });
+        } catch (err) {
+            console.error("Error saving FAQ inquiry:", err);
+        }
         await new Promise((r) => setTimeout(r, 1000));
         setLoading(false);
         setSubmitted(true);
@@ -67,17 +79,15 @@ export default function FaqSection() {
     };
 
     return (
-        <section id="faq" className="py-7 md:py-14 bg-black text-white border-t border-zinc-900">
+        <section id="faq" className="py-7 md:py-14 bg-background border-t border-border">
             <div className="container max-w-6xl mx-auto px-4">
                 {/* Heading */}
-                <div className="text-center mb-14">
-                    <span className="text-xs font-bold uppercase tracking-widest text-red-500 mb-2 inline-block">
-                        NEED HELP?
-                    </span>
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight mb-4">
+                <div className="text-center sec-header">
+
+                    <h2 className="sec-title">
                         Frequently Asked Questions
                     </h2>
-                    <p className="text-zinc-400 text-sm md:text-base max-w-xl mx-auto">
+                    <p className="sec-desc mx-auto">
                         Get clear answers to the most common questions about our software development and technology services.
                     </p>
                 </div>
@@ -92,13 +102,13 @@ export default function FaqSection() {
                                 <AccordionItem
                                     key={index}
                                     value={`item-${index}`}
-                                    className="bg-black border border-zinc-800 hover:border-red-500/50 rounded-2xl px-6 py-1 transition-colors duration-300"
+                                    className="bg-card border border-border/80 hover:border-red-500/50 rounded-sm px-6 py-1 transition-colors duration-300"
                                 >
-                                    <AccordionTrigger className="text-left text-base sm:text-lg font-bold text-white hover:text-red-500 transition-colors duration-300 hover:no-underline py-5">
+                                    <AccordionTrigger className="text-left text-base sm:text-lg font-bold text-foreground hover:text-red-500 transition-colors duration-300 hover:no-underline py-5">
                                         {faq.question}
                                     </AccordionTrigger>
 
-                                    <AccordionContent className="text-zinc-400 text-sm sm:text-base pb-5 leading-relaxed">
+                                    <AccordionContent className="text-muted-foreground text-sm sm:text-base pb-5 leading-relaxed">
                                         {faq.answer}
                                     </AccordionContent>
                                 </AccordionItem>
@@ -107,13 +117,13 @@ export default function FaqSection() {
                     </div>
 
                     {/* RIGHT — Question Form */}
-                    <div className="bg-black border border-zinc-800 rounded-2xl p-6 sm:p-8 lg:p-10 h-fit">
+                    <div className="bg-card border border-border/80 rounded-sm p-6 sm:p-8 lg:p-10 h-fit">
                         {/* Form header */}
                         <div className="mb-6">
-                            <h3 className="text-2xl font-bold text-white text-center">
+                            <h3 className="text-2xl font-bold text-foreground text-center">
                                 Still Have A Question?
                             </h3>
-                            <p className="text-zinc-400 text-xs text-center mt-1">
+                            <p className="text-muted-foreground text-sm md:text-base text-center mt-1">
                                 Send us a message and our team will get back to you within 24 hours.
                             </p>
                         </div>
@@ -125,8 +135,8 @@ export default function FaqSection() {
                                         <path strokeLinecap="square" strokeLinejoin="miter" d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
-                                <h4 className="text-xl font-bold text-white">Question Submitted!</h4>
-                                <p className="text-zinc-400 text-sm max-w-xs">
+                                <h4 className="text-xl font-bold text-foreground">Question Submitted!</h4>
+                                <p className="text-muted-foreground text-sm max-w-xs">
                                     Thank you! We&apos;ll review your question and respond shortly.
                                 </p>
                                 <button
@@ -142,7 +152,7 @@ export default function FaqSection() {
                                 <div>
                                     <label
                                         htmlFor="faq-name"
-                                        className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1.5"
+                                        className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5"
                                     >
                                         Full Name <span className="text-red-500">*</span>
                                     </label>
@@ -154,7 +164,7 @@ export default function FaqSection() {
                                         value={formData.name}
                                         onChange={handleChange}
                                         placeholder="John Doe"
-                                        className="w-full bg-zinc-950 border border-zinc-800 text-white placeholder:text-zinc-600 px-4 py-3 rounded-xl text-sm outline-none focus:border-red-500 transition-colors"
+                                        className="w-full bg-background border border-border/80 text-foreground placeholder:text-muted-foreground px-4 py-3 rounded-xl text-sm outline-none focus:border-red-500 transition-colors"
                                     />
                                 </div>
 
@@ -163,7 +173,7 @@ export default function FaqSection() {
                                     <div>
                                         <label
                                             htmlFor="faq-email"
-                                            className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1.5"
+                                            className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5"
                                         >
                                             Email <span className="text-red-500">*</span>
                                         </label>
@@ -175,13 +185,13 @@ export default function FaqSection() {
                                             value={formData.email}
                                             onChange={handleChange}
                                             placeholder="you@email.com"
-                                            className="w-full bg-zinc-950 border border-zinc-800 text-white placeholder:text-zinc-600 px-4 py-3 rounded-xl text-sm outline-none focus:border-red-500 transition-colors"
+                                            className="w-full bg-background border border-border/80 text-foreground placeholder:text-muted-foreground px-4 py-3 rounded-xl text-sm outline-none focus:border-red-500 transition-colors"
                                         />
                                     </div>
                                     <div>
                                         <label
                                             htmlFor="faq-phone"
-                                            className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1.5"
+                                            className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5"
                                         >
                                             Phone
                                         </label>
@@ -192,7 +202,7 @@ export default function FaqSection() {
                                             value={formData.phone}
                                             onChange={handleChange}
                                             placeholder="+1 (000) 000-0000"
-                                            className="w-full bg-zinc-950 border border-zinc-800 text-white placeholder:text-zinc-600 px-4 py-3 rounded-xl text-sm outline-none focus:border-red-500 transition-colors"
+                                            className="w-full bg-background border border-border/80 text-foreground placeholder:text-muted-foreground px-4 py-3 rounded-xl text-sm outline-none focus:border-red-500 transition-colors"
                                         />
                                     </div>
                                 </div>
@@ -201,7 +211,7 @@ export default function FaqSection() {
                                 <div>
                                     <label
                                         htmlFor="faq-question"
-                                        className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1.5"
+                                        className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5"
                                     >
                                         Your Question <span className="text-red-500">*</span>
                                     </label>
@@ -213,7 +223,7 @@ export default function FaqSection() {
                                         value={formData.question}
                                         onChange={handleChange}
                                         placeholder="Type your question here..."
-                                        className="w-full bg-zinc-950 border border-zinc-800 text-white placeholder:text-zinc-600 px-4 py-3 rounded-xl text-sm outline-none focus:border-red-500 transition-colors resize-none"
+                                        className="w-full bg-background border border-border/80 text-foreground placeholder:text-muted-foreground px-4 py-3 rounded-xl text-sm outline-none focus:border-red-500 transition-colors resize-none"
                                     />
                                 </div>
 
@@ -223,7 +233,7 @@ export default function FaqSection() {
                                         id="faq-submit"
                                         type="submit"
                                         disabled={loading}
-                                        className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-red-700 hover:bg-red-800 text-white font-bold text-sm tracking-wider uppercase px-8 py-3.5 rounded-xl transition-colors duration-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-red-700 hover:bg-red-800 text-white font-bold text-xs sm:text-sm tracking-wider px-4 py-2.5 sm:px-8 sm:py-3.5 rounded-lg sm:rounded-xl transition-colors duration-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                                     >
                                         {loading ? (
                                             <>

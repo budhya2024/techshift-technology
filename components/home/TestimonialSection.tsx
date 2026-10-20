@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { getStoredReviews, Review } from "@/lib/reviewStore";
 
 const row1Testimonials = [
   {
@@ -74,6 +75,20 @@ const row2Testimonials = [
 ];
 
 export default function TestimonialSection() {
+  const [reviewsList, setReviewsList] = useState<Review[]>([]);
+
+  useEffect(() => {
+    setReviewsList(getStoredReviews());
+    const handleUpdate = () => setReviewsList(getStoredReviews());
+    window.addEventListener("reviews_updated", handleUpdate);
+    return () => window.removeEventListener("reviews_updated", handleUpdate);
+  }, []);
+
+  const activeReviews = reviewsList.length > 0 ? reviewsList : [...row1Testimonials, ...row2Testimonials].map((t) => ({ ...t, status: "Published" as const }));
+  const half = Math.ceil(activeReviews.length / 2);
+  const row1 = activeReviews.slice(0, half);
+  const row2 = activeReviews.slice(half);
+
   return (
     <section className="py-7 md:py-14 bg-background text-foreground overflow-hidden">
       <div className="container sec-header">
@@ -93,7 +108,7 @@ export default function TestimonialSection() {
         {/* Row 1: Left Auto Slider */}
         <div className="flex w-full overflow-hidden py-1">
           <div className="animate-marquee-left flex gap-6">
-            {[...row1Testimonials, ...row1Testimonials].map((testimonial, idx) => (
+            {[...row1, ...row1].map((testimonial, idx) => (
               <div
                 key={`r1-${idx}`}
                 className="w-[340px] md:w-[400px] flex-shrink-0 bg-card border border-border/80 p-7 rounded relative  transition-colors duration-300 flex flex-col justify-between group "
@@ -109,7 +124,7 @@ export default function TestimonialSection() {
                 <div className="flex items-center gap-3 pt-4 border-t border-border/60">
                   <div className="relative w-10 h-10 rounded-full overflow-hidden border border-red-500/30 flex-shrink-0">
                     <Image
-                      src={testimonial.image}
+                      src={testimonial.image || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=150&auto=format&fit=crop"}
                       alt={testimonial.name}
                       fill
                       className="object-cover"
@@ -128,7 +143,7 @@ export default function TestimonialSection() {
         {/* Row 2: Right Auto Slider */}
         <div className="flex w-full overflow-hidden py-1">
           <div className="animate-marquee-right flex gap-6">
-            {[...row2Testimonials, ...row2Testimonials].map((testimonial, idx) => (
+            {[...row2, ...row2].map((testimonial, idx) => (
               <div
                 key={`r2-${idx}`}
                 className="w-[340px] md:w-[400px] flex-shrink-0 bg-card border border-border/80 p-7 rounded relative  transition-colors duration-300 flex flex-col justify-between group "
@@ -142,7 +157,7 @@ export default function TestimonialSection() {
                 <div className="flex items-center gap-3 pt-4 border-t border-border/60">
                   <div className="relative w-10 h-10 rounded-full overflow-hidden border border-red-500/30 flex-shrink-0">
                     <Image
-                      src={testimonial.image}
+                      src={testimonial.image || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop"}
                       alt={testimonial.name}
                       fill
                       className="object-cover"
