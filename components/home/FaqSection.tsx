@@ -8,6 +8,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
+import CountryPhoneInput from "@/components/ui/CountryPhoneInput";
 
 const faqs = [
     {
@@ -195,14 +196,11 @@ export default function FaqSection() {
                                         >
                                             Phone
                                         </label>
-                                        <input
+                                        <CountryPhoneInput
                                             id="faq-phone"
-                                            type="tel"
                                             name="phone"
                                             value={formData.phone}
                                             onChange={handleChange}
-                                            placeholder="+1 (000) 000-0000"
-                                            className="w-full bg-background border border-border/80 text-foreground placeholder:text-muted-foreground px-4 py-3 rounded-xl text-sm outline-none focus:border-red-500 transition-colors"
                                         />
                                     </div>
                                 </div>

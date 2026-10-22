@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { HiOutlineMenuAlt3 } from "react-icons/hi";
 
 interface NavigationProps {
     currentPage?: string;
@@ -43,11 +44,10 @@ export const Header = ({ currentPage }: NavigationProps) => {
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className={`relative overflow-hidden transition-all duration-300 text-sm font-semibold px-3 py-2 group ${
-                                    isCurrentPage(link.href)
-                                        ? "text-red-500"
-                                        : "text-foreground hover:text-red-500"
-                                }`}
+                                className={`relative overflow-hidden transition-all duration-300 text-sm font-semibold px-3 py-2 group ${isCurrentPage(link.href)
+                                    ? "text-red-500"
+                                    : "text-foreground hover:text-red-500"
+                                    }`}
                             >
                                 {link.label}
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full"></span>
@@ -62,7 +62,8 @@ export const Header = ({ currentPage }: NavigationProps) => {
                             aria-label="Toggle mobile menu"
                             className="relative z-50 p-2 text-foreground hover:text-red-500 transition-colors duration-300 rounded hover:bg-card flex items-center justify-center"
                         >
-                            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                            {mobileMenuOpen ? <X size={26} /> : <HiOutlineMenuAlt3
+                                size={26} />}
                         </button>
                     </div>
                 </div>
@@ -70,9 +71,8 @@ export const Header = ({ currentPage }: NavigationProps) => {
 
             {/* Mobile Menu — single column */}
             <div
-                className={`fixed inset-0 z-40 md:hidden transition-transform duration-300 ease-in-out ${
-                    mobileMenuOpen ? "translate-x-0" : "translate-x-full"
-                }`}
+                className={`fixed inset-0 z-40 md:hidden transition-transform duration-300 ease-in-out ${mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+                    }`}
             >
                 <div className="absolute inset-0 bg-background" />
 
@@ -82,9 +82,8 @@ export const Header = ({ currentPage }: NavigationProps) => {
                             key={link.href}
                             href={link.href}
                             onClick={() => setMobileMenuOpen(false)}
-                            className={`relative text-[16px] font-semibold px-6 py-2.5 group transition-all duration-300 ${
-                                isCurrentPage(link.href) ? "text-red-500" : "text-foreground hover:text-red-500"
-                            } ${mobileMenuOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`}
+                            className={`relative text-[16px] font-semibold px-6 py-2.5 group transition-all duration-300 ${isCurrentPage(link.href) ? "text-red-500" : "text-foreground hover:text-red-500"
+                                } ${mobileMenuOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`}
                             style={{ transitionDelay: `${index * 80}ms` }}
                         >
                             {link.label}

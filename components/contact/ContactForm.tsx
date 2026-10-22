@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FiPhone, FiMail, FiClock, FiMessageCircle, FiSend, FiUser, FiBriefcase } from "react-icons/fi";
 
 import { addContactLead } from "@/lib/contactStore";
+import CountryPhoneInput from "@/components/ui/CountryPhoneInput";
 
 interface FormData {
     firstName: string;
@@ -225,18 +226,14 @@ export default function ContactForm() {
                                             </div>
 
                                             {/* Phone */}
-                                            <div className="relative">
-                                                <FiPhone className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4 pointer-events-none" />
-                                                <input
-                                                    id="phone"
-                                                    name="phone"
-                                                    type="tel"
-                                                    placeholder="Phone Number"
-                                                    value={formData.phone}
-                                                    onChange={handleChange}
-                                                    className="w-full bg-secondary/80 border border-border rounded pl-10 pr-4 py-3 text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:border-red-500 focus:bg-secondary transition-all duration-200"
-                                                />
-                                            </div>
+                                            <CountryPhoneInput
+                                                id="phone"
+                                                name="phone"
+                                                placeholder="Phone Number"
+                                                value={formData.phone}
+                                                onChange={handleChange}
+                                                fieldClassName="rounded bg-secondary/80 border border-border focus-within:border-red-500 focus-within:bg-secondary"
+                                            />
                                         </div>
 
                                         {/* Company */}

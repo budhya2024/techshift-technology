@@ -126,7 +126,7 @@ export default function ServiceSection({
               delay: 4000,
               disableOnInteraction: false,
             }}
-            spaceBetween={28}
+            spaceBetween={16}
             slidesPerView={1.15}
             breakpoints={{
               640: { slidesPerView: 1.5, spaceBetween: 24 },
@@ -150,7 +150,7 @@ export default function ServiceSection({
                 {({ isActive }) => (
                   <div
                     onClick={() => router.push(service.link)}
-                    className={`group relative rounded-lg overflow-hidden border transition-all duration-500 flex flex-col justify-end h-[380px] p-8 shadow-xl cursor-pointer ${isActive ? "border-gray-800/80 bg-[#0d131c]" : "border-gray-800/80 bg-[#0c1118] "
+                    className={`group relative rounded-lg overflow-hidden border transition-all duration-500 flex flex-col justify-end h-[380px] p-6 md:p-8 shadow-xl cursor-pointer ${isActive ? "border-gray-800/80 bg-[#0d131c]" : "border-gray-800/80 bg-[#0c1118] "
                       }`}
                   >
                     {/* Background Image with Gradient Overlay */}

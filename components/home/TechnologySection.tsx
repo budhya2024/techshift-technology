@@ -38,9 +38,7 @@ export default function TechnologySection() {
           <h2 className="sec-title text-white">
             Technology we use
           </h2>
-          <p className="sec-desc text-white mx-auto">
-            We select technologies based on scalability, reliability, and long-term maintainability.
-          </p>
+
         </div>
 
         {/* Grid */}

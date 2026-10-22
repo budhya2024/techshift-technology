@@ -1,17 +1,6 @@
 "use client";
 
 import React from "react";
-import { 
-  ShieldCheck, 
-  Lock, 
-  Eye, 
-  FileText, 
-  UserCheck, 
-  Globe, 
-  Database, 
-  Mail, 
-  Phone 
-} from "lucide-react";
 
 export default function PrivacyContent() {
   const lastUpdated = "September 30, 2026";
@@ -19,7 +8,6 @@ export default function PrivacyContent() {
   const sections = [
     {
       id: "collection",
-      icon: Database,
       title: "1. Information We Collect",
       content: (
         <div className="space-y-3 text-zinc-600 leading-relaxed text-sm md:text-base">
@@ -36,7 +24,6 @@ export default function PrivacyContent() {
     },
     {
       id: "usage",
-      icon: Eye,
       title: "2. How We Use Your Information",
       content: (
         <div className="space-y-3 text-zinc-600 leading-relaxed text-sm md:text-base">
@@ -54,7 +41,6 @@ export default function PrivacyContent() {
     },
     {
       id: "protection",
-      icon: Lock,
       title: "3. Data Protection & Security",
       content: (
         <div className="space-y-3 text-zinc-600 leading-relaxed text-sm md:text-base">
@@ -69,7 +55,6 @@ export default function PrivacyContent() {
     },
     {
       id: "cookies",
-      icon: Globe,
       title: "4. Cookies & Analytics",
       content: (
         <div className="space-y-3 text-zinc-600 leading-relaxed text-sm md:text-base">
@@ -84,7 +69,6 @@ export default function PrivacyContent() {
     },
     {
       id: "sharing",
-      icon: ShieldCheck,
       title: "5. Sharing & Disclosure",
       content: (
         <div className="space-y-3 text-zinc-600 leading-relaxed text-sm md:text-base">
@@ -99,7 +83,6 @@ export default function PrivacyContent() {
     },
     {
       id: "rights",
-      icon: UserCheck,
       title: "6. Your Data Rights",
       content: (
         <div className="space-y-3 text-zinc-600 leading-relaxed text-sm md:text-base">
@@ -117,7 +100,6 @@ export default function PrivacyContent() {
     },
     {
       id: "contact",
-      icon: Mail,
       title: "7. Contact Privacy Team",
       content: (
         <div className="space-y-4 text-zinc-600 leading-relaxed text-sm md:text-base">
@@ -125,13 +107,17 @@ export default function PrivacyContent() {
             If you have any questions, concerns, or requests regarding this Privacy Policy or our data handling practices, please contact us directly:
           </p>
           <div className="bg-zinc-50 border border-zinc-200 p-5 rounded-xl space-y-3">
-            <div className="flex items-center space-x-3 text-zinc-800">
-              <Mail className="w-5 h-5 text-red-600 flex-shrink-0" />
-              <span className="font-medium">techshifttechnology@gmail.com</span>
+            <div className="text-zinc-800">
+              <span className="text-zinc-500 text-sm block">Email:</span>
+              <a href="mailto:techshifttechnology@gmail.com" className="font-medium text-zinc-900 hover:text-red-600 transition-colors">
+                techshifttechnology@gmail.com
+              </a>
             </div>
-            <div className="flex items-center space-x-3 text-zinc-800">
-              <Phone className="w-5 h-5 text-red-600 flex-shrink-0" />
-              <span className="font-medium">+91 7797538010</span>
+            <div className="text-zinc-800">
+              <span className="text-zinc-500 text-sm block">Phone:</span>
+              <a href="tel:+917797538010" className="font-medium text-zinc-900 hover:text-red-600 transition-colors">
+                +91 7797538010
+              </a>
             </div>
           </div>
         </div>
@@ -144,18 +130,13 @@ export default function PrivacyContent() {
       <div className="container max-w-5xl">
         {/* Top Meta Header Card */}
         <div className="bg-white border border-zinc-200/90 p-6 md:p-8 rounded-2xl mb-10 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-xl bg-red-50 border border-red-200/80 flex items-center justify-center text-red-600">
-              <FileText className="w-6 h-6" />
-            </div>
-            <div>
-              <h2 className="text-xl md:text-2xl font-bold text-zinc-900">
-                Privacy Policy Agreement
-              </h2>
-              <p className="text-zinc-500 text-xs md:text-sm mt-0.5">
-                Your trust and data security are our top priorities.
-              </p>
-            </div>
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold text-zinc-900">
+              Privacy Policy Agreement
+            </h2>
+            <p className="text-zinc-500 text-xs md:text-sm mt-0.5">
+              Your trust and data security are our top priorities.
+            </p>
           </div>
           <div className="px-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs md:text-sm text-zinc-600">
             Last Updated: <span className="text-zinc-900 font-semibold">{lastUpdated}</span>
@@ -164,26 +145,20 @@ export default function PrivacyContent() {
 
         {/* Content Sections Grid */}
         <div className="space-y-8">
-          {sections.map((sec) => {
-            const Icon = sec.icon;
-            return (
-              <div
-                key={sec.id}
-                id={sec.id}
-                className="bg-white border border-zinc-200/90 p-6 md:p-8 rounded-2xl shadow-sm hover:border-red-500/40 hover:shadow-md transition-all duration-300"
-              >
-                <div className="flex items-center space-x-3 mb-4 border-b border-zinc-100 pb-4">
-                  <div className="w-9 h-9 rounded-lg bg-red-50 border border-red-200/60 flex items-center justify-center text-red-600 flex-shrink-0">
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <h3 className="text-lg md:text-xl font-bold text-zinc-900">
-                    {sec.title}
-                  </h3>
-                </div>
-                {sec.content}
+          {sections.map((sec) => (
+            <div
+              key={sec.id}
+              id={sec.id}
+              className="bg-white border border-zinc-200/90 p-6 md:p-8 rounded-2xl shadow-sm hover:border-red-500/40 hover:shadow-md transition-all duration-300"
+            >
+              <div className="mb-4 border-b border-zinc-100 pb-4">
+                <h3 className="text-lg md:text-xl font-bold text-zinc-900">
+                  {sec.title}
+                </h3>
               </div>
-            );
-          })}
+              {sec.content}
+            </div>
+          ))}
         </div>
       </div>
     </section>

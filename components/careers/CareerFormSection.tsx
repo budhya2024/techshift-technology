@@ -13,6 +13,7 @@ import {
     FiFileText,
     FiX,
 } from "react-icons/fi";
+import CountryPhoneInput from "@/components/ui/CountryPhoneInput";
 
 const positions = [
     "Senior Frontend Developer",
@@ -180,13 +181,12 @@ export default function CareerFormSection({
                             <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-2 flex items-center gap-2">
                                 <FiPhone className="text-red-500" /> Phone Number <span className="text-red-500">*</span>
                             </label>
-                            <input
-                                type="tel"
+                            <CountryPhoneInput
+                                id="career-phone"
+                                name="phone"
                                 required
-                                placeholder="+1 (555) 000-0000"
                                 value={formData.phone}
-                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                className="w-full bg-background border border-border/80 focus:border-red-500 rounded-xl px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none transition-colors"
+                                onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
                             />
                         </div>
 

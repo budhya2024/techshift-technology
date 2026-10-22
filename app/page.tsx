@@ -6,6 +6,7 @@ import Header from "@/components/shared/Hader";
 import Image from "next/image";
 import CtaSection from "@/components/home/CtaSection";
 import HeroSection from "@/components/home/HeroSection";
+import LogoLoopSlider from "@/components/home/LogoLoopSlider";
 import TestimonialSection from "@/components/home/TestimonialSection";
 import TechnologySection from "@/components/home/TechnologySection";
 import StatsSection from "@/components/home/StatsSection";
@@ -16,14 +17,18 @@ export default function Home() {
     <>
       <Header />
       <HeroSection />
+
+      <LogoLoopSlider />
       <ServiceSection />
       <TechnologySection />
+
       <WorkSection />
       <StatsSection />
       <TestimonialSection />
       <FaqSection />
       <CtaSection />
       <Footer />
+
     </>
   );
 }
