@@ -233,7 +233,7 @@ export default function FaqSection() {
                                         id="faq-submit"
                                         type="submit"
                                         disabled={loading}
-                                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-red-700 hover:bg-red-800 text-white font-bold text-xs sm:text-sm tracking-wider px-4 py-2.5 sm:px-8 sm:py-3.5 rounded-lg sm:rounded-xl transition-colors duration-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-red-700 hover:bg-red-800 text-white font-bold text-xs sm:text-sm tracking-wider px-4  sm:px-8 py-3.5 rounded-lg sm:rounded-xl transition-colors duration-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                                     >
                                         {loading ? (
                                             <>

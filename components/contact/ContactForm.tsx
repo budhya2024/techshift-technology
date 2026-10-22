@@ -272,7 +272,7 @@ export default function ContactForm() {
                                             id="submit-contact"
                                             type="submit"
                                             disabled={loading}
-                                            className="w-full inline-flex items-center justify-center gap-2 bg-red-700 hover:bg-red-800 text-white font-bold text-xs sm:text-base px-4 py-2.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl transition-colors duration-300 disabled:opacity-60 cursor-pointer"
+                                            className="w-full inline-flex items-center justify-center gap-2 bg-red-700 hover:bg-red-800 text-white font-bold text-xs sm:text-base px-4 sm:px-8 py-3.5 rounded-xl sm:rounded-2xl transition-colors duration-300 disabled:opacity-60 cursor-pointer"
                                         >
                                             <span className="relative z-10 flex items-center justify-center gap-2">
                                                 {loading ? (

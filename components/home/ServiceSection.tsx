@@ -194,7 +194,7 @@ export default function ServiceSection({
                                 e.stopPropagation();
                                 router.push(service.link);
                               }}
-                              className="inline-flex items-center gap-1.5 px-3.5 py-2 sm:px-6 sm:py-3 bg-red-700 hover:bg-red-800 text-white text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl transition-colors duration-300 group/btn cursor-pointer"
+                              className="inline-flex items-center gap-1.5 px-3.5  sm:px-6 py-3.5 bg-red-700 hover:bg-red-800 text-white text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl transition-colors duration-300 group/btn cursor-pointer"
                             >
                               <span>Explore Service</span>
                               <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />

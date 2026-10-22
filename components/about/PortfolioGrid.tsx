@@ -85,7 +85,7 @@ export default function PortfolioGrid() {
                                     href={project.liveUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-2 w-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 sm:py-3 rounded-[4px] transition-colors duration-300"
+                                    className="flex items-center justify-center gap-2 w-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-3 rounded-[4px] transition-colors duration-300"
                                 >
                                     <FiExternalLink className="w-3.5 h-3.5" />
                                     Live Demo

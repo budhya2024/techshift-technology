@@ -141,14 +141,14 @@ export default function HeroSection() {
                 <div className="flex items-center justify-center gap-3 sm:gap-5">
                     <Link
                         href="/contact"
-                        className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl bg-red-700 hover:bg-red-800 text-white font-bold text-xs sm:text-base tracking-wide transition-colors duration-300 text-center"
+                        className="w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-8 py-3.5 rounded-xl sm:rounded-2xl bg-red-700 hover:bg-red-800 text-white font-bold text-xs sm:text-base tracking-wide transition-colors duration-300 text-center"
                     >
                         Get Started
                     </Link>
 
                     <Link
                         href="/work"
-                        className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs sm:text-base tracking-wide border border-zinc-800 transition-colors duration-300 text-center"
+                        className="w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-8 py-3.5 rounded-xl sm:rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs sm:text-base tracking-wide border border-zinc-800 transition-colors duration-300 text-center"
                     >
                         See Demo
                     </Link>

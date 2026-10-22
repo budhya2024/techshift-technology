@@ -98,7 +98,7 @@ export default function AboutContent() {
                         </div>
 
                         {/* Right Metrics Column */}
-                        <div className="space-y-6 bg-[#090d14]  text-right">
+                        <div className="grid grid-cols-2 md:grid-cols-1 gap-6 bg-[#090d14]  text-left md:text-right">
                             {stats.map((stat, i) => (
                                 <div key={i} className=" pb-5 md:pb-10  last:pb-0 ">
                                     <div className="text-xs md:text-base font-medium text-gray-400 mb-1">
@@ -132,13 +132,13 @@ export default function AboutContent() {
                     </div>
 
                     {/* 8 Grid Cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                         {industries.map((ind, index) => {
                             const Icon = ind.icon;
                             return (
                                 <div
                                     key={index}
-                                    className="group relative rounded-lg bg-[#0d131c] border border-gray-800/80 p-8 h-48 flex flex-col justify-between overflow-hidden hover:border-red-500/50 transition-all duration-300 shadow-lg cursor-pointer"
+                                    className="group relative rounded-lg bg-[#0d131c] border border-gray-800/80 p-4 md:p-8  flex flex-col gap-4 justify-between overflow-hidden hover:border-red-500/50 transition-all duration-300 shadow-lg cursor-pointer"
                                 >
 
 
@@ -150,7 +150,7 @@ export default function AboutContent() {
                                     </div>
 
                                     {/* Card Title */}
-                                    <h3 className="text-lg font-bold text-white relative z-10 group-hover:text-red-400 transition-colors duration-300 max-w-[85%]">
+                                    <h3 className="text-sm sm:text-base md:text-lg font-bold text-white relative z-10 group-hover:text-red-400 transition-colors duration-300  mt-auto">
                                         {ind.title}
                                     </h3>
                                 </div>

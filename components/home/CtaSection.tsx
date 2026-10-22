@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 export default function CtaSection() {
     return (
         <section className="pb-7 md:pb-14 rounded overflow-hidden container mx-auto">
-            <div className="bg-gradient-to-r from-black to-gray-900 px-4 sm:px-8 md:px-12 pt-6 md:pt-0 pb-0! rounded-lg">
+            <div className="bg-gradient-to-r from-black to-gray-900 px-4 sm:px-8 md:px-12 pt-12 md:pt-0 pb-0! rounded-lg">
                 <div className="grid lg:grid-cols-3 gap-12 items-center">
                     <div className="lg:col-span-2">
                         <h2 className="sec-title text-white! mb-6">
@@ -18,7 +18,7 @@ export default function CtaSection() {
 
                         <Link
                             href="/contact"
-                            className="inline-flex items-center justify-center bg-red-700 hover:bg-red-800 text-white font-bold text-xs sm:text-base px-4 py-2.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl transition-colors duration-300"
+                            className="inline-flex items-center justify-center bg-red-700 hover:bg-red-800 text-white font-bold text-xs sm:text-base px-4 sm:px-8 py-3.5 rounded-xl sm:rounded-2xl transition-colors duration-300"
                         >
                             Get Started
                         </Link>
