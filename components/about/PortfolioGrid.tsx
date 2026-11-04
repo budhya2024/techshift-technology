@@ -2,13 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { FiArrowRight, FiExternalLink } from "react-icons/fi";
-import { getStoredProjects, Project } from "@/lib/portfolioStore";
+import { getStoredProjects, fetchProjects, Project } from "@/lib/portfolioStore";
 
 export default function PortfolioGrid() {
     const [projectsList, setProjectsList] = useState<Project[]>([]);
 
     useEffect(() => {
         setProjectsList(getStoredProjects());
+        fetchProjects().then((res) => {
+            if (Array.isArray(res)) setProjectsList(res);
+        });
 
         const handleUpdate = () => {
             setProjectsList(getStoredProjects());
@@ -70,7 +73,7 @@ export default function PortfolioGrid() {
 
                                 {/* Tech Tags */}
                                 <div className="flex flex-wrap gap-2 mb-4">
-                                    {project.tags.map((tag) => (
+                                    {(Array.isArray(project.tags) ? project.tags : []).map((tag) => (
                                         <span
                                             key={tag}
                                             className="border border-zinc-800 bg-black text-white text-xs px-2 py-0.5 rounded-[2px]"

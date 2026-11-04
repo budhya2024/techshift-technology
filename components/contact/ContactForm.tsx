@@ -62,7 +62,7 @@ export default function ContactForm() {
         e.preventDefault();
         setLoading(true);
         try {
-            addContactLead({
+            await addContactLead({
                 type: "contact",
                 name: `${formData.firstName} ${formData.lastName}`.trim() || "Anonymous",
                 email: formData.email,

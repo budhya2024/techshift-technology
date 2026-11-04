@@ -70,7 +70,7 @@ export function getStoredContacts(): ContactLead[] {
       return INITIAL_CONTACTS;
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
+    if (Array.isArray(parsed)) {
       return parsed;
     }
   } catch (err) {
@@ -89,20 +89,82 @@ export function saveStoredContacts(contacts: ContactLead[]): void {
   }
 }
 
-export function addContactLead(data: Omit<ContactLead, "id" | "createdAt" | "status">): ContactLead {
+// ================= DATABASE API METHODS =================
+
+export async function fetchContacts(): Promise<ContactLead[]> {
+  try {
+    const res = await fetch("/api/contacts");
+    if (!res.ok) throw new Error("Failed to fetch contact leads");
+    const data: ContactLead[] = await res.json();
+    if (typeof window !== "undefined" && Array.isArray(data)) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      window.dispatchEvent(new Event("contacts_updated"));
+    }
+    return data;
+  } catch (error) {
+    console.error("Error in fetchContacts:", error);
+    return getStoredContacts();
+  }
+}
+
+export async function submitContactLead(
+  data: Omit<ContactLead, "id" | "createdAt" | "status">
+): Promise<ContactLead> {
+  try {
+    const res = await fetch("/api/contacts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (res.ok) {
+      const created: ContactLead = await res.json();
+      const current = getStoredContacts();
+      saveStoredContacts([created, ...current.filter((c) => c.id !== created.id)]);
+      return created;
+    }
+  } catch (error) {
+    console.warn("Online submission to /api/contacts failed, falling back to local storage:", error);
+  }
+
+  // Graceful offline fallback
   const current = getStoredContacts();
   const newId = current.length > 0 ? Math.max(...current.map((c) => c.id)) + 1 : 1;
   const now = new Date();
   const dateStr = now.toISOString().replace("T", " ").substring(0, 16);
-
-  const newLead: ContactLead = {
+  const fallbackLead: ContactLead = {
     ...data,
     id: newId,
     createdAt: dateStr,
     status: "New",
   };
+  saveStoredContacts([fallbackLead, ...current]);
+  return fallbackLead;
+}
 
-  const updated = [newLead, ...current];
-  saveStoredContacts(updated);
-  return newLead;
+export async function updateContactStatus(
+  id: number,
+  status: ContactLead["status"]
+): Promise<ContactLead> {
+  const res = await fetch("/api/contacts", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id, status }),
+  });
+  if (!res.ok) throw new Error("Failed to update contact status");
+  const updated: ContactLead = await res.json();
+  await fetchContacts();
+  return updated;
+}
+
+export async function deleteContact(id: number): Promise<boolean> {
+  const res = await fetch(`/api/contacts?id=${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete contact lead");
+  await fetchContacts();
+  return true;
+}
+
+export async function addContactLead(data: Omit<ContactLead, "id" | "createdAt" | "status">): Promise<ContactLead> {
+  return await submitContactLead(data);
 }

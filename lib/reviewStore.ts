@@ -42,7 +42,7 @@ export const INITIAL_REVIEWS: Review[] = [
     content: "Working with them was an absolute pleasure. They delivered our e-commerce platform ahead of schedule and the design is absolutely breathtaking.",
     rating: 5,
     date: "Aug 19, 2026",
-    status: "Published",
+    status: "Pending",
   },
   {
     id: 4,
@@ -58,45 +58,12 @@ export const INITIAL_REVIEWS: Review[] = [
   {
     id: 5,
     name: "Michael Chang",
-    role: "CTO, NextGen Solutions",
-    company: "NextGen Solutions",
+    role: "Product Lead",
+    company: "Nexus Labs",
     image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150&auto=format&fit=crop",
-    content: "We had a highly complex backend architecture requirement. Not only did they deliver a robust, scalable solution, but the code quality was pristine with complete documentation.",
+    content: "Outstanding quality and incredible domain knowledge across Next.js and cloud architectures. They helped us launch our mobile app without any friction.",
     rating: 5,
-    date: "Jun 24, 2026",
-    status: "Published",
-  },
-  {
-    id: 6,
-    name: "Jessica Walsh",
-    role: "Product Manager",
-    company: "Nova Studios",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=150&auto=format&fit=crop",
-    content: "Their UI/UX team is phenomenal. They took our vague ideas and turned them into a beautiful, intuitive interface that our customers love.",
-    rating: 5,
-    date: "May 15, 2026",
-    status: "Published",
-  },
-  {
-    id: 7,
-    name: "Amanda Smith",
-    role: "Co-Founder, RetailPulse",
-    company: "RetailPulse",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop",
-    content: "Our mobile conversion rates jumped 45% immediately after launching the new React Native app created by Techshift. Exceptional craft and reliable support.",
-    rating: 5,
-    date: "Apr 02, 2026",
-    status: "Published",
-  },
-  {
-    id: 8,
-    name: "Robert Fox",
-    role: "Operations Head",
-    company: "Apex Global",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150&auto=format&fit=crop",
-    content: "Professional, responsive, and incredibly talented. They are our go-to technology partners for all digital initiatives.",
-    rating: 4,
-    date: "Mar 11, 2026",
+    date: "Jun 22, 2026",
     status: "Published",
   }
 ];
@@ -114,13 +81,17 @@ export function getStoredReviews(): Review[] {
       return INITIAL_REVIEWS;
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
+    if (Array.isArray(parsed)) {
       return parsed;
     }
   } catch (err) {
     console.error("Failed to load reviews from localStorage:", err);
   }
   return INITIAL_REVIEWS;
+}
+
+export function getPublishedReviews(): Review[] {
+  return getStoredReviews().filter((r) => r.status === "Published");
 }
 
 export function saveStoredReviews(reviews: Review[]): void {
@@ -131,4 +102,57 @@ export function saveStoredReviews(reviews: Review[]): void {
   } catch (err) {
     console.error("Failed to save reviews to localStorage:", err);
   }
+}
+
+// ================= DATABASE API METHODS =================
+
+export async function fetchReviews(status?: string): Promise<Review[]> {
+  try {
+    const url = status ? `/api/reviews?status=${encodeURIComponent(status)}` : "/api/reviews";
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Failed to fetch reviews");
+    const data: Review[] = await res.json();
+    if (typeof window !== "undefined" && !status && Array.isArray(data)) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      window.dispatchEvent(new Event("reviews_updated"));
+    }
+    return data;
+  } catch (error) {
+    console.error("Error in fetchReviews:", error);
+    const local = getStoredReviews();
+    return status ? local.filter((r) => r.status.toLowerCase() === status.toLowerCase()) : local;
+  }
+}
+
+export async function createReview(reviewData: Omit<Review, "id">): Promise<Review> {
+  const res = await fetch("/api/reviews", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(reviewData),
+  });
+  if (!res.ok) throw new Error("Failed to create review in database");
+  const created = await res.json();
+  await fetchReviews();
+  return created;
+}
+
+export async function updateReview(reviewData: Review): Promise<Review> {
+  const res = await fetch("/api/reviews", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(reviewData),
+  });
+  if (!res.ok) throw new Error("Failed to update review in database");
+  const updated = await res.json();
+  await fetchReviews();
+  return updated;
+}
+
+export async function deleteReview(id: number): Promise<boolean> {
+  const res = await fetch(`/api/reviews?id=${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete review in database");
+  await fetchReviews();
+  return true;
 }

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { getStoredServices } from "@/lib/serviceStore";
+import { getStoredServices, fetchServices } from "@/lib/serviceStore";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -74,6 +74,9 @@ export default function ServiceSection({
   useEffect(() => {
     if (!services) {
       setItems(getStoredServices());
+      fetchServices().then((res) => {
+        if (Array.isArray(res)) setItems(res);
+      });
       const handleUpdate = () => setItems(getStoredServices());
       window.addEventListener("services_updated", handleUpdate);
       return () => window.removeEventListener("services_updated", handleUpdate);

@@ -63,7 +63,7 @@ export default function FaqSection() {
         e.preventDefault();
         setLoading(true);
         try {
-            addContactLead({
+            await addContactLead({
                 type: "faq",
                 name: formData.name || "Anonymous",
                 email: formData.email,
