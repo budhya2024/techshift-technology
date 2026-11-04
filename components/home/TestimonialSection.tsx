@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { getStoredReviews, Review } from "@/lib/reviewStore";
+import { getPublishedReviews, fetchReviews, Review } from "@/lib/reviewStore";
 
 const row1Testimonials = [
   {
@@ -19,14 +19,6 @@ const row1Testimonials = [
     role: "Founder, GrowthStack",
     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=150&auto=format&fit=crop",
     content: "The team at Techshift isn't just a development agency; they are strategic partners. They helped us rethink our entire user journey and delivered a product that looks stunning and performs even better.",
-    rating: 5,
-  },
-  {
-    id: 3,
-    name: "Emily Rodriguez",
-    role: "Marketing Director",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=150&auto=format&fit=crop",
-    content: "Working with them was an absolute pleasure. They delivered our e-commerce platform ahead of schedule and the design is absolutely breathtaking.",
     rating: 5,
   },
   {
@@ -78,13 +70,36 @@ export default function TestimonialSection() {
   const [reviewsList, setReviewsList] = useState<Review[]>([]);
 
   useEffect(() => {
-    setReviewsList(getStoredReviews());
-    const handleUpdate = () => setReviewsList(getStoredReviews());
+    // 1. Initial cached state (strictly published only)
+    setReviewsList(getPublishedReviews());
+
+    // 2. Fetch live published reviews from the database
+    fetchReviews("Published").then((res) => {
+      if (Array.isArray(res)) {
+        setReviewsList(res.filter((r) => r.status === "Published"));
+      }
+    });
+
+    // 3. Listen to store updates (e.g. status changes in admin)
+    const handleUpdate = () => {
+      setReviewsList(getPublishedReviews());
+      fetchReviews("Published").then((res) => {
+        if (Array.isArray(res)) {
+          setReviewsList(res.filter((r) => r.status === "Published"));
+        }
+      });
+    };
+
     window.addEventListener("reviews_updated", handleUpdate);
     return () => window.removeEventListener("reviews_updated", handleUpdate);
   }, []);
 
-  const activeReviews = reviewsList.length > 0 ? reviewsList : [...row1Testimonials, ...row2Testimonials].map((t) => ({ ...t, status: "Published" as const }));
+  const publishedOnly = reviewsList.filter((r) => r.status === "Published");
+  const fallbackList = [...row1Testimonials, ...row2Testimonials].map((t) => ({
+    ...t,
+    status: "Published" as const,
+  }));
+  const activeReviews = publishedOnly.length > 0 ? publishedOnly : fallbackList;
   const half = Math.ceil(activeReviews.length / 2);
   const row1 = activeReviews.slice(0, half);
   const row2 = activeReviews.slice(half);

@@ -6,6 +6,7 @@ export interface Service {
   bgImage: string;
   badge?: string;
   category?: string;
+  orderIndex?: number;
 }
 
 export const INITIAL_SERVICES: Service[] = [
@@ -16,7 +17,8 @@ export const INITIAL_SERVICES: Service[] = [
     link: "/contact",
     bgImage: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&auto=format&fit=crop&q=80",
     badge: "E-Commerce",
-    category: "Development"
+    category: "Development",
+    orderIndex: 1
   },
   {
     id: 2,
@@ -25,7 +27,8 @@ export const INITIAL_SERVICES: Service[] = [
     link: "/contact",
     bgImage: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&auto=format&fit=crop&q=80",
     badge: "iOS / Android",
-    category: "Mobile"
+    category: "Mobile",
+    orderIndex: 2
   },
   {
     id: 3,
@@ -34,7 +37,8 @@ export const INITIAL_SERVICES: Service[] = [
     link: "/contact",
     bgImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80",
     badge: "Next.js / React",
-    category: "Development"
+    category: "Development",
+    orderIndex: 3
   },
   {
     id: 4,
@@ -43,7 +47,8 @@ export const INITIAL_SERVICES: Service[] = [
     link: "/contact",
     bgImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80",
     badge: "Growth & SEO",
-    category: "Marketing"
+    category: "Marketing",
+    orderIndex: 4
   },
   {
     id: 5,
@@ -52,7 +57,8 @@ export const INITIAL_SERVICES: Service[] = [
     link: "/contact",
     bgImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80",
     badge: "Machine Learning",
-    category: "AI & Data"
+    category: "AI & Data",
+    orderIndex: 5
   },
   {
     id: 6,
@@ -61,7 +67,8 @@ export const INITIAL_SERVICES: Service[] = [
     link: "/contact",
     bgImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop",
     badge: "AWS / Docker",
-    category: "Infrastructure"
+    category: "Infrastructure",
+    orderIndex: 6
   }
 ];
 
@@ -78,7 +85,7 @@ export function getStoredServices(): Service[] {
       return INITIAL_SERVICES;
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
+    if (Array.isArray(parsed)) {
       return parsed;
     }
   } catch (err) {
@@ -95,4 +102,55 @@ export function saveStoredServices(services: Service[]): void {
   } catch (err) {
     console.error("Failed to save services to localStorage:", err);
   }
+}
+
+// ================= DATABASE API METHODS =================
+
+export async function fetchServices(): Promise<Service[]> {
+  try {
+    const res = await fetch("/api/services");
+    if (!res.ok) throw new Error("Failed to fetch services");
+    const data: Service[] = await res.json();
+    if (typeof window !== "undefined" && Array.isArray(data)) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      window.dispatchEvent(new Event("services_updated"));
+    }
+    return data;
+  } catch (error) {
+    console.error("Error in fetchServices:", error);
+    return getStoredServices();
+  }
+}
+
+export async function createService(serviceData: Omit<Service, "id">): Promise<Service> {
+  const res = await fetch("/api/services", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(serviceData),
+  });
+  if (!res.ok) throw new Error("Failed to create service in database");
+  const created = await res.json();
+  await fetchServices();
+  return created;
+}
+
+export async function updateService(serviceData: Service): Promise<Service> {
+  const res = await fetch("/api/services", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(serviceData),
+  });
+  if (!res.ok) throw new Error("Failed to update service in database");
+  const updated = await res.json();
+  await fetchServices();
+  return updated;
+}
+
+export async function deleteService(id: number): Promise<boolean> {
+  const res = await fetch(`/api/services?id=${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete service in database");
+  await fetchServices();
+  return true;
 }

@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth/client";
 import {
   LayoutDashboard,
   Layers,
@@ -34,6 +36,7 @@ import {
   Inbox,
   LogOut,
   Upload,
+  Loader2,
   Filter
 } from "lucide-react";
 
@@ -42,6 +45,12 @@ import {
   saveStoredProjects,
   getStoredCategories,
   saveStoredCategories,
+  fetchProjects,
+  fetchCategories,
+  createProject,
+  updateProject,
+  deleteProject,
+  createCategory,
   INITIAL_PROJECTS,
   INITIAL_CATEGORIES,
   Project,
@@ -50,6 +59,10 @@ import {
 import {
   getStoredServices,
   saveStoredServices,
+  fetchServices,
+  createService,
+  updateService,
+  deleteService,
   INITIAL_SERVICES,
   Service,
 } from "@/lib/serviceStore";
@@ -57,6 +70,10 @@ import {
 import {
   getStoredReviews,
   saveStoredReviews,
+  fetchReviews,
+  createReview,
+  updateReview,
+  deleteReview,
   INITIAL_REVIEWS,
   Review,
 } from "@/lib/reviewStore";
@@ -64,6 +81,9 @@ import {
 import {
   getStoredContacts,
   saveStoredContacts,
+  fetchContacts,
+  updateContactStatus,
+  deleteContact,
   INITIAL_CONTACTS,
   ContactLead,
 } from "@/lib/contactStore";
@@ -71,8 +91,17 @@ import {
 type AdminTab = "dashboard" | "services" | "reviews" | "portfolio" | "contact";
 
 export default function AdminPage() {
+  const router = useRouter();
+  const { data: sessionData, isPending: sessionLoading } = authClient.useSession();
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  // Protect Admin route with Neon Auth
+  useEffect(() => {
+    if (!sessionLoading && !sessionData?.user) {
+      window.location.href = "/admin/login";
+    }
+  }, [sessionLoading, sessionData]);
 
   // ================= DATA STATES =================
   const [projects, setProjects] = useState<Project[]>([]);
@@ -88,6 +117,13 @@ export default function AdminPage() {
     setServices(getStoredServices());
     setReviews(getStoredReviews());
     setContacts(getStoredContacts());
+
+    // Fetch live from Neon database
+    fetchProjects().then(setProjects);
+    fetchCategories().then(setCategories);
+    fetchServices().then(setServices);
+    fetchReviews().then(setReviews);
+    fetchContacts().then(setContacts);
 
     const handlePortfolio = () => {
       setProjects(getStoredProjects());
@@ -175,10 +211,12 @@ export default function AdminPage() {
     );
   };
 
-  // Helper: Handle file image upload and convert to base64 data URL
-  const handleImageFileChange = (
+  // Helper: Handle file image upload directly to Neon Object Storage
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const handleImageFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    onSuccess: (dataUrl: string) => void
+    onSuccess: (url: string) => void
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -188,11 +226,33 @@ export default function AdminPage() {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Image size should be less than 5MB.");
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Image size should be less than 10MB.");
       return;
     }
 
+    setIsUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        onSuccess(data.url);
+        setIsUploadingImage(false);
+        return;
+      }
+    } catch (err) {
+      console.warn("Neon Object Storage upload failed, falling back to local preview:", err);
+    } finally {
+      setIsUploadingImage(false);
+    }
+
+    // Fallback if needed
     const reader = new FileReader();
     reader.onload = (event) => {
       if (event.target?.result) {
@@ -251,32 +311,32 @@ export default function AdminPage() {
     }
 
     if (editingService) {
-      const updated = services.map((s) =>
-        s.id === editingService.id
-          ? {
-            ...s,
-            title: serviceForm.title,
-            category: serviceForm.category,
-            badge: serviceForm.badge,
-            description: serviceForm.description,
-            link: serviceForm.link,
-            bgImage: serviceForm.bgImage,
-          }
-          : s
-      );
+      const updatedItem: Service = {
+        ...editingService,
+        title: serviceForm.title,
+        category: serviceForm.category,
+        badge: serviceForm.badge,
+        description: serviceForm.description,
+        link: serviceForm.link,
+        bgImage: serviceForm.bgImage,
+      };
+      const updated = services.map((s) => (s.id === editingService.id ? updatedItem : s));
       updateServices(updated);
+      updateService(updatedItem).catch(console.error);
     } else {
-      const newId = services.length > 0 ? Math.max(...services.map((s) => s.id)) + 1 : 1;
-      const newService: Service = {
-        id: newId,
+      const newServiceData = {
         title: serviceForm.title,
         category: serviceForm.category,
         badge: serviceForm.badge || undefined,
         description: serviceForm.description,
-        link: serviceForm.link || "",
+        link: serviceForm.link || "/contact",
         bgImage: serviceForm.bgImage || "",
       };
-      updateServices([...services, newService]);
+      createService(newServiceData)
+        .then((created) => {
+          setServices((prev) => [created, ...prev.filter((s) => s.id !== created.id)]);
+        })
+        .catch(console.error);
     }
     setIsServiceModalOpen(false);
   };
@@ -287,6 +347,7 @@ export default function AdminPage() {
       "Are you sure you want to delete this service? It will no longer be visible on your website.",
       () => {
         updateServices(services.filter((s) => s.id !== service.id));
+        deleteService(service.id).catch(console.error);
       },
       service.title
     );
@@ -351,26 +412,22 @@ export default function AdminPage() {
     }
 
     if (editingReview) {
-      const updated = reviews.map((r) =>
-        r.id === editingReview.id
-          ? {
-            ...r,
-            name: reviewForm.name,
-            role: reviewForm.role,
-            company: reviewForm.company,
-            content: reviewForm.content,
-            rating: reviewForm.rating,
-            image: reviewForm.image,
-            status: reviewForm.status,
-          }
-          : r
-      );
+      const updatedItem: Review = {
+        ...editingReview,
+        name: reviewForm.name,
+        role: reviewForm.role,
+        company: reviewForm.company,
+        content: reviewForm.content,
+        rating: reviewForm.rating,
+        image: reviewForm.image,
+        status: reviewForm.status,
+      };
+      const updated = reviews.map((r) => (r.id === editingReview.id ? updatedItem : r));
       updateReviews(updated);
+      updateReview(updatedItem).catch(console.error);
     } else {
-      const newId = reviews.length > 0 ? Math.max(...reviews.map((r) => r.id)) + 1 : 1;
       const today = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-      const newReview: Review = {
-        id: newId,
+      const newReviewData = {
         name: reviewForm.name,
         role: reviewForm.role,
         company: reviewForm.company,
@@ -380,7 +437,11 @@ export default function AdminPage() {
         date: today,
         status: reviewForm.status,
       };
-      updateReviews([newReview, ...reviews]);
+      createReview(newReviewData)
+        .then((created) => {
+          setReviews((prev) => [created, ...prev.filter((r) => r.id !== created.id)]);
+        })
+        .catch(console.error);
     }
     setIsReviewModalOpen(false);
   };
@@ -391,9 +452,18 @@ export default function AdminPage() {
       "Are you sure you want to delete this client testimonial? This action cannot be undone.",
       () => {
         updateReviews(reviews.filter((r) => r.id !== review.id));
+        deleteReview(review.id).catch(console.error);
       },
       review.name
     );
+  };
+
+  const handleToggleReviewStatus = (r: Review) => {
+    const newStatus: "Published" | "Pending" = r.status === "Published" ? "Pending" : "Published";
+    const updatedItem: Review = { ...r, status: newStatus };
+    const updated = reviews.map((item) => (item.id === r.id ? updatedItem : item));
+    updateReviews(updated);
+    updateReview(updatedItem).catch(console.error);
   };
 
   const filteredReviews = useMemo(() => {
@@ -465,6 +535,7 @@ export default function AdminPage() {
     // Automatically register and persist new category if not already in categories
     if (!categories.includes(trimmedCategory)) {
       updateCategories([...categories, trimmedCategory]);
+      createCategory(trimmedCategory).catch(console.error);
     }
 
     const tagsArray = projectForm.tags
@@ -473,24 +544,8 @@ export default function AdminPage() {
       .filter((t) => t.length > 0);
 
     if (editingProject) {
-      const updated = projects.map((p) =>
-        p.id === editingProject.id
-          ? {
-            ...p,
-            title: projectForm.title,
-            category: trimmedCategory,
-            description: projectForm.description,
-            image: projectForm.image,
-            tags: tagsArray,
-            liveUrl: projectForm.liveUrl,
-          }
-          : p
-      );
-      updateProjects(updated);
-    } else {
-      const newId = projects.length > 0 ? Math.max(...projects.map((p) => p.id)) + 1 : 1;
-      const newProj: Project = {
-        id: newId,
+      const updatedItem: Project = {
+        ...editingProject,
         title: projectForm.title,
         category: trimmedCategory,
         description: projectForm.description,
@@ -498,7 +553,23 @@ export default function AdminPage() {
         tags: tagsArray,
         liveUrl: projectForm.liveUrl,
       };
-      updateProjects([newProj, ...projects]);
+      const updated = projects.map((p) => (p.id === editingProject.id ? updatedItem : p));
+      updateProjects(updated);
+      updateProject(updatedItem).catch(console.error);
+    } else {
+      const newProjData = {
+        title: projectForm.title,
+        category: trimmedCategory,
+        description: projectForm.description,
+        image: projectForm.image || "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&auto=format&fit=crop&q=80",
+        tags: tagsArray,
+        liveUrl: projectForm.liveUrl || "https://techshifttechnology.com",
+      };
+      createProject(newProjData)
+        .then((created) => {
+          setProjects((prev) => [created, ...prev.filter((p) => p.id !== created.id)]);
+        })
+        .catch(console.error);
     }
     setIsProjectModalOpen(false);
   };
@@ -509,6 +580,7 @@ export default function AdminPage() {
       "Are you sure you want to delete this project from your showcase portfolio?",
       () => {
         updateProjects(projects.filter((p) => p.id !== project.id));
+        deleteProject(project.id).catch(console.error);
       },
       project.title
     );
@@ -539,6 +611,7 @@ export default function AdminPage() {
     if (selectedLeadModal && selectedLeadModal.id === id) {
       setSelectedLeadModal({ ...selectedLeadModal, status: newStatus });
     }
+    updateContactStatus(id, newStatus).catch(console.error);
   };
 
   const handleDeleteContact = (lead: ContactLead) => {
@@ -548,6 +621,7 @@ export default function AdminPage() {
       () => {
         updateContacts(contacts.filter((c) => c.id !== lead.id));
         if (selectedLeadModal?.id === lead.id) setSelectedLeadModal(null);
+        deleteContact(lead.id).catch(console.error);
       },
       lead.name
     );
@@ -570,6 +644,16 @@ export default function AdminPage() {
     return contacts.filter((c) => c.status === "New").length;
   }, [contacts]);
 
+  const avgRating = useMemo(() => {
+    if (reviews.length === 0) return "5.0";
+    const sum = reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0);
+    return (sum / reviews.length).toFixed(1);
+  }, [reviews]);
+
+  const publishedReviewsCount = useMemo(() => {
+    return reviews.filter((r) => r.status === "Published").length;
+  }, [reviews]);
+
   // ================= EXECUTIVE LIGHT THEME CLASSMAP =================
   const theme = {
     bgPage: "bg-[#f8fafc]",
@@ -584,6 +668,15 @@ export default function AdminPage() {
     tableHeaderBg: "bg-slate-50 text-slate-700 font-bold",
     borderBase: "border-slate-200",
   };
+
+  if (sessionLoading || !sessionData?.user) {
+    return (
+      <div className="min-h-screen bg-[#070b12] flex flex-col items-center justify-center text-white">
+        <Loader2 className="w-8 h-8 text-red-500 animate-spin mb-3" />
+        <p className="text-xs text-slate-400 font-medium">Verifying administrator session...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f8fafc] font-sans flex flex-col md:flex-row antialiased">
@@ -717,13 +810,29 @@ export default function AdminPage() {
           </nav>
         </div>
 
-        {/* Sidebar Footer: Only Logout Button */}
-        <div className="pt-4 border-t border-slate-200">
+        {/* Sidebar Footer: Administrator Profile & Logout Button */}
+        <div className="pt-4 border-t border-slate-200 space-y-2">
+          {sessionData?.user && (
+            <div className="px-2 py-1 flex items-center space-x-2">
+              <div className="w-7 h-7 rounded-full bg-red-600/10 text-red-600 font-bold flex items-center justify-center text-xs shrink-0">
+                {(sessionData.user.name || sessionData.user.email || "A").charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-semibold text-slate-800 truncate">
+                  {sessionData.user.name || "Administrator"}
+                </p>
+                <p className="text-[10px] text-slate-500 truncate">
+                  {sessionData.user.email}
+                </p>
+              </div>
+            </div>
+          )}
           <button
-            onClick={() => {
-              window.location.href = "/";
+            onClick={async () => {
+              await authClient.signOut();
+              window.location.href = "/admin/login";
             }}
-            className="w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold text-rose-600 hover:text-white bg-rose-50 hover:bg-red-600 border border-rose-200/80 hover:border-red-600 rounded-xl transition-all shadow-2xs group"
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold text-rose-600 hover:text-white bg-rose-50 hover:bg-red-600 border border-rose-200/80 hover:border-red-600 rounded-xl transition-all shadow-2xs group cursor-pointer"
           >
             <LogOut className="w-4.5 h-4.5 text-rose-500 group-hover:text-white group-hover:-translate-x-0.5 transition-all" />
             <span>Logout</span>
@@ -823,7 +932,7 @@ export default function AdminPage() {
                   <div className="flex items-baseline space-x-2">
                     <p className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">{reviews.length}</p>
                     <span className="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-                      ★ 4.9 Avg
+                      ★ {avgRating} ({publishedReviewsCount} published)
                     </span>
                   </div>
                   <p className="text-sm text-slate-500 mt-2.5 flex items-center gap-1 font-medium">
@@ -1185,14 +1294,18 @@ export default function AdminPage() {
                     {/* Footer Info & Actions */}
                     <div className="pt-3 border-t border-slate-200 flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <span
-                          className={`  text-xs font-bold uppercase ${review.status === "Published"
-                            ? " text-emerald-700 "
-                            : " text-amber-700 "
-                            }`}
+                        <button
+                          type="button"
+                          onClick={() => handleToggleReviewStatus(review)}
+                          className={`text-xs font-bold uppercase px-2 py-0.5 rounded cursor-pointer transition-colors ${
+                            review.status === "Published"
+                              ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
+                              : "bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200"
+                          }`}
+                          title={`Click to switch to ${review.status === "Published" ? "Pending (Hidden)" : "Published"}`}
                         >
                           {review.status}
-                        </span>
+                        </button>
                         <span className="text-xs font-medium text-slate-400">{review.date || "Active"}</span>
                       </div>
 
@@ -1632,17 +1745,17 @@ export default function AdminPage() {
                   <label className="border border-dashed border-slate-300 hover:border-red-500 rounded-lg px-3 py-2 flex items-center justify-between cursor-pointer bg-slate-50 hover:bg-red-50/15 transition-colors group">
                     <div className="flex items-center space-x-2.5">
                       <div className="w-7 h-7 rounded-md bg-red-50 text-red-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                        <Upload className="w-3.5 h-3.5" />
+                        {isUploadingImage ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
                       </div>
                       <div className="text-left">
                         <p className="text-xs font-semibold text-slate-700 leading-tight">
-                          Click to upload background image
+                          {isUploadingImage ? "Uploading to Neon Object Storage..." : "Click to upload background image"}
                         </p>
-                        <p className="text-[10px] text-slate-400">PNG, JPG, WEBP (max 5MB)</p>
+                        <p className="text-[10px] text-slate-400">PNG, JPG, WEBP (max 10MB)</p>
                       </div>
                     </div>
                     <span className="text-xs font-semibold text-red-600 bg-white border border-red-200 px-2.5 py-1 rounded-md shadow-2xs group-hover:bg-red-600 group-hover:text-white transition-colors">
-                      Browse
+                      {isUploadingImage ? "Uploading..." : "Browse"}
                     </span>
                     <input
                       type="file"
@@ -1804,13 +1917,13 @@ export default function AdminPage() {
                       <p className="text-xs font-semibold text-slate-800 truncate">
                         {reviewForm.image ? "Avatar attached" : "No photo selected"}
                       </p>
-                      <p className="text-[10px] text-slate-400">Square JPG or PNG, max 5MB</p>
+                      <p className="text-[10px] text-slate-400">Square JPG or PNG, max 10MB</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-1.5 shrink-0">
                     <label className="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-md transition-colors shadow-2xs">
-                      <Upload className="w-3 h-3" />
-                      <span>{reviewForm.image ? "Change" : "Upload"}</span>
+                      {isUploadingImage ? <Loader2 className="w-3 h-3 animate-spin text-red-600" /> : <Upload className="w-3 h-3" />}
+                      <span>{isUploadingImage ? "Uploading..." : reviewForm.image ? "Change" : "Upload"}</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -2031,17 +2144,17 @@ export default function AdminPage() {
                   <label className="border border-dashed border-slate-300 hover:border-red-500 rounded-lg px-3 py-2 flex items-center justify-between cursor-pointer bg-slate-50 hover:bg-red-50/15 transition-colors group">
                     <div className="flex items-center space-x-2.5">
                       <div className="w-7 h-7 rounded-md bg-red-50 text-red-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                        <Upload className="w-3.5 h-3.5" />
+                        {isUploadingImage ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
                       </div>
                       <div className="text-left">
                         <p className="text-xs font-semibold text-slate-700 leading-tight">
-                          Click to upload cover image
+                          {isUploadingImage ? "Uploading to Neon Object Storage..." : "Click to upload cover image"}
                         </p>
-                        <p className="text-[10px] text-slate-400">PNG, JPG, WEBP (16:9 recommended)</p>
+                        <p className="text-[10px] text-slate-400">PNG, JPG, WEBP (16:9 recommended, max 10MB)</p>
                       </div>
                     </div>
                     <span className="text-xs font-semibold text-red-600 bg-white border border-red-200 px-2.5 py-1 rounded-md shadow-2xs group-hover:bg-red-600 group-hover:text-white transition-colors">
-                      Browse
+                      {isUploadingImage ? "Uploading..." : "Browse"}
                     </span>
                     <input
                       type="file"

@@ -122,7 +122,7 @@ export function getStoredProjects(): Project[] {
       return INITIAL_PROJECTS;
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
+    if (Array.isArray(parsed)) {
       return parsed;
     }
   } catch (err) {
@@ -152,7 +152,7 @@ export function getStoredCategories(): string[] {
       return INITIAL_CATEGORIES;
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
+    if (Array.isArray(parsed)) {
       return parsed;
     }
   } catch (err) {
@@ -169,4 +169,117 @@ export function saveStoredCategories(categories: string[]): void {
   } catch (err) {
     console.error("Failed to save categories to localStorage:", err);
   }
+}
+
+// ================= DATABASE & OBJECT STORAGE API METHODS =================
+
+export async function fetchProjects(): Promise<Project[]> {
+  try {
+    const res = await fetch("/api/portfolio");
+    if (!res.ok) throw new Error("Failed to fetch portfolio projects");
+    const data: Project[] = await res.json();
+    if (typeof window !== "undefined" && Array.isArray(data)) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      window.dispatchEvent(new Event("portfolio_updated"));
+    }
+    return data;
+  } catch (error) {
+    console.error("Error in fetchProjects:", error);
+    return getStoredProjects();
+  }
+}
+
+export async function fetchCategories(): Promise<string[]> {
+  try {
+    const res = await fetch("/api/portfolio/categories");
+    if (!res.ok) throw new Error("Failed to fetch categories");
+    const data: string[] = await res.json();
+    if (typeof window !== "undefined" && Array.isArray(data)) {
+      localStorage.setItem(CATEGORIES_KEY, JSON.stringify(data));
+      window.dispatchEvent(new Event("portfolio_updated"));
+    }
+    return data;
+  } catch (error) {
+    console.error("Error in fetchCategories:", error);
+    return getStoredCategories();
+  }
+}
+
+export async function createProject(projectData: Omit<Project, "id">): Promise<Project> {
+  const res = await fetch("/api/portfolio", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(projectData),
+  });
+  if (!res.ok) throw new Error("Failed to create portfolio project");
+  const created = await res.json();
+  await fetchProjects();
+  return created;
+}
+
+export async function updateProject(projectData: Project): Promise<Project> {
+  const res = await fetch("/api/portfolio", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(projectData),
+  });
+  if (!res.ok) throw new Error("Failed to update portfolio project");
+  const updated = await res.json();
+  await fetchProjects();
+  return updated;
+}
+
+export async function deleteProject(id: number): Promise<boolean> {
+  const res = await fetch(`/api/portfolio?id=${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete portfolio project");
+  await fetchProjects();
+  return true;
+}
+
+export async function createCategory(name: string): Promise<string[]> {
+  const res = await fetch("/api/portfolio/categories", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name }),
+  });
+  if (!res.ok) throw new Error("Failed to create category");
+  const categories = await res.json();
+  if (typeof window !== "undefined") {
+    localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+    window.dispatchEvent(new Event("portfolio_updated"));
+  }
+  return categories;
+}
+
+export async function deleteCategory(name: string): Promise<string[]> {
+  const res = await fetch(`/api/portfolio/categories?name=${encodeURIComponent(name)}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete category");
+  const categories = await res.json();
+  if (typeof window !== "undefined") {
+    localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+    window.dispatchEvent(new Event("portfolio_updated"));
+  }
+  return categories;
+}
+
+export async function uploadProjectImage(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Failed to upload image to Neon Object Storage");
+  }
+
+  const data = await res.json();
+  return data.url;
 }
