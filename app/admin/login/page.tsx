@@ -50,36 +50,17 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen bg-[#070b12] text-white flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden selection:bg-red-500 selection:text-white">
-      {/* Background glow effects */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-72 h-72 bg-blue-600/5 rounded-full blur-3xl pointer-events-none" />
+  
 
       <div className="w-full max-w-md relative z-10">
-        {/* Brand Header */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-4 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-600 to-red-500 flex items-center justify-center text-white shadow-lg shadow-red-600/30 group-hover:scale-105 transition-transform">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <span className="text-xl font-bold tracking-tight text-white">
-              Techshift <span className="text-red-500">Admin</span>
-            </span>
-          </Link>
-          <h1 className="text-2xl font-bold text-white tracking-tight">
-            Administrator Sign In
-          </h1>
-          <p className="text-xs text-slate-400 mt-1.5">
-            Internal administrative access only. Public registration is strictly disabled.
-          </p>
-        </div>
+      
 
         {/* Card */}
         <div className="bg-[#0e1626]/90 border border-slate-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
-          {/* Security Banner */}
-          <div className="mb-6 p-3 bg-red-950/30 border border-red-500/20 rounded-xl flex items-center gap-2.5 text-xs text-red-300">
-            <ShieldCheck className="w-4 h-4 text-red-400 shrink-0" />
-            <span>Restricted area: Authorized agency personnel only.</span>
-          </div>
+          <h1 className="text-2xl font-bold text-white tracking-tight text-center pb-4">
+            Administrator Sign In
+          </h1>
+        
 
           {/* Feedback messages */}
           {errorMsg && (
@@ -133,7 +114,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs md:text-sm transition-all shadow-lg shadow-red-600/25 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full mt-2 bg-linear-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs md:text-sm transition-all shadow-lg shadow-red-600/25 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {loading ? (
                 <>
@@ -149,16 +130,7 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          {/* Footer details */}
-          <div className="mt-6 pt-5 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
-            <span className="flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-red-500" />
-              Secured by Neon Auth
-            </span>
-            <Link href="/" className="hover:text-slate-300 transition-colors">
-              Return to Website
-            </Link>
-          </div>
+  
         </div>
       </div>
     </div>
