@@ -71,6 +71,16 @@ async function run() {
     );
   `;
 
+  await sql`
+    CREATE TABLE IF NOT EXISTS faqs (
+      id SERIAL PRIMARY KEY,
+      question TEXT NOT NULL,
+      answer TEXT NOT NULL,
+      order_index INT DEFAULT 0,
+      status TEXT NOT NULL DEFAULT 'Published'
+    );
+  `;
+
   console.log("Tables created successfully. Checking existing records...");
 
   const existingServices = await sql`SELECT count(*) FROM services`;
@@ -350,6 +360,56 @@ async function run() {
       await sql`
         INSERT INTO contact_leads (type, name, email, phone, company, message, created_at, status)
         VALUES (${c.type}, ${c.name}, ${c.email}, ${c.phone}, ${c.company}, ${c.message}, ${c.created_at}, ${c.status})
+      `;
+    }
+  }
+
+  const existingFaqs = await sql`SELECT count(*) FROM faqs`;
+  if (parseInt(existingFaqs[0].count) === 0) {
+    console.log("Seeding faqs...");
+    const faqs = [
+      {
+        question: "What services does Techshift Technology offer?",
+        answer: "We offer a comprehensive range of digital services including mobile app development, web development, digital marketing, e-commerce solutions, UI/UX design, and performance optimization.",
+        order_index: 1,
+        status: "Published",
+      },
+      {
+        question: "How long does it take to complete a project?",
+        answer: "Project timelines vary depending on complexity and scope. Typically, web development projects take 2-6 weeks, mobile apps take 4-12 weeks, and digital marketing campaigns can be launched within 1-2 weeks.",
+        order_index: 2,
+        status: "Published",
+      },
+      {
+        question: "Do you provide ongoing support after project completion?",
+        answer: "Yes, we provide comprehensive post-launch support including maintenance, updates, hosting support, and technical assistance to ensure your digital solution continues to perform optimally.",
+        order_index: 3,
+        status: "Published",
+      },
+      {
+        question: "What is your pricing structure?",
+        answer: "We offer transparent, highly competitive, and budget-friendly pricing tailored to your project requirements. We specialize in low-cost, high-value packages for startups and businesses with flexible milestone payments and zero hidden fees.",
+        order_index: 4,
+        status: "Published",
+      },
+      {
+        question: "Can you help with SEO and digital marketing?",
+        answer: "Absolutely! We specialize in SEO optimization, Google Ads management, social media marketing, and comprehensive digital marketing strategies to help increase your online visibility and drive conversions.",
+        order_index: 5,
+        status: "Published",
+      },
+      {
+        question: "Do you work with businesses of all sizes?",
+        answer: "Yes, we work with businesses of all sizes — from startups and small businesses to large enterprises. We tailor our solutions to meet the specific needs and budget of each client.",
+        order_index: 6,
+        status: "Published",
+      },
+    ];
+
+    for (const f of faqs) {
+      await sql`
+        INSERT INTO faqs (question, answer, order_index, status)
+        VALUES (${f.question}, ${f.answer}, ${f.order_index}, ${f.status})
       `;
     }
   }

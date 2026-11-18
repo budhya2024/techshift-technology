@@ -199,7 +199,7 @@ export default function ServiceSection({
                               }}
                               className="inline-flex items-center gap-1.5 px-3.5  sm:px-6 py-3.5 bg-red-700 hover:bg-red-800 text-white text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl transition-colors duration-300 group/btn cursor-pointer"
                             >
-                              <span>Explore Service</span>
+                              <span>Book Service</span>
                               <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
                             </button>
                           </div>

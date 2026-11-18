@@ -139,12 +139,12 @@ export default function HeroSection() {
                             href="/contact"
                             className="w-full sm:w-auto inline-flex gap-1 items-center justify-center px-4 sm:px-8 py-3.5 rounded-xl sm:rounded-2xl bg-red-700 hover:bg-red-800 text-white font-bold text-xs sm:text-base tracking-wide transition-colors duration-300 text-center"
                         >
-                            Get Started
+                            Get a consultant
                             <ChevronRight size={18} />
                         </Link>
 
                         <Link
-                            href="/work"
+                            href="/portfolio"
                             className="w-full sm:w-auto inline-flex gap-1  items-center justify-center px-4 sm:px-8 py-3.5 rounded-xl sm:rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs sm:text-base tracking-wide border border-zinc-800 transition-colors duration-300 text-center"
                         >
                             See Demo

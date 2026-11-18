@@ -17,6 +17,42 @@ interface CountryPhoneInputProps {
   icon?: React.ReactNode;
 }
 
+function CountryFlag({
+  iso,
+  name,
+  fallbackEmoji,
+  className = "",
+}: {
+  iso: string;
+  name: string;
+  fallbackEmoji?: string;
+  className?: string;
+}) {
+  const [hasError, setHasError] = useState(false);
+  const code = iso.toLowerCase();
+
+  if (hasError) {
+    return (
+      <span className={`inline-flex items-center justify-center text-xs shrink-0 ${className}`}>
+        {fallbackEmoji || iso.toUpperCase()}
+      </span>
+    );
+  }
+
+  return (
+    <img
+      src={`https://flagcdn.com/w40/${code}.png`}
+      srcSet={`https://flagcdn.com/w80/${code}.png 2x`}
+      alt={name}
+      width={20}
+      height={14}
+      loading="lazy"
+      onError={() => setHasError(true)}
+      className={`w-5 h-3.5 object-cover rounded-[2px] shadow-2xs shrink-0 border border-border/50 ${className}`}
+    />
+  );
+}
+
 export default function CountryPhoneInput({
   id = "phone",
   name = "phone",
@@ -149,7 +185,11 @@ export default function CountryPhoneInput({
           title={`${selectedCountry.name} (${selectedCountry.code})`}
         >
           {icon && <span className="text-muted-foreground mr-1">{icon}</span>}
-          <span className="text-lg leading-none">{selectedCountry.flag}</span>
+          <CountryFlag
+            iso={selectedCountry.iso}
+            name={selectedCountry.name}
+            fallbackEmoji={selectedCountry.flag}
+          />
           <span className="text-xs font-semibold text-foreground tracking-tight">
             {selectedCountry.code}
           </span>
@@ -208,7 +248,11 @@ export default function CountryPhoneInput({
                     }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                      <span className="text-base leading-none shrink-0">{country.flag}</span>
+                      <CountryFlag
+                        iso={country.iso}
+                        name={country.name}
+                        fallbackEmoji={country.flag}
+                      />
                       <span className="truncate">{country.name}</span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">

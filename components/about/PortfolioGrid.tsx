@@ -46,11 +46,11 @@ export default function PortfolioGrid() {
                             className="bg-card border border-border rounded-[4px] transition-all duration-300 group flex flex-col cursor-pointer overflow-hidden"
                         >
                             {/* Image */}
-                            <div className="overflow-hidden aspect-[4/3] relative">
+                            <div className="overflow-hidden relative">
                                 <img
                                     src={project.image}
                                     alt={project.title}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
                                 />
                             </div>
 

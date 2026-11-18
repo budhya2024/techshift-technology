@@ -37,7 +37,8 @@ import {
   LogOut,
   Upload,
   Loader2,
-  Filter
+  Filter,
+  HelpCircle
 } from "lucide-react";
 
 import {
@@ -88,7 +89,17 @@ import {
   ContactLead,
 } from "@/lib/contactStore";
 
-type AdminTab = "dashboard" | "services" | "reviews" | "portfolio" | "contact";
+import {
+  getStoredFaqs,
+  saveStoredFaqs,
+  fetchFaqs,
+  createFaq,
+  updateFaq,
+  deleteFaq,
+  Faq,
+} from "@/lib/faqStore";
+
+type AdminTab = "dashboard" | "services" | "reviews" | "portfolio" | "contact" | "faqs";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -109,6 +120,7 @@ export default function AdminPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [contacts, setContacts] = useState<ContactLead[]>([]);
+  const [faqs, setFaqs] = useState<Faq[]>([]);
 
   // Load all data on mount
   useEffect(() => {
@@ -117,6 +129,7 @@ export default function AdminPage() {
     setServices(getStoredServices());
     setReviews(getStoredReviews());
     setContacts(getStoredContacts());
+    setFaqs(getStoredFaqs());
 
     // Fetch live from Neon database
     fetchProjects().then(setProjects);
@@ -124,6 +137,7 @@ export default function AdminPage() {
     fetchServices().then(setServices);
     fetchReviews().then(setReviews);
     fetchContacts().then(setContacts);
+    fetchFaqs().then(setFaqs);
 
     const handlePortfolio = () => {
       setProjects(getStoredProjects());
@@ -132,17 +146,20 @@ export default function AdminPage() {
     const handleServices = () => setServices(getStoredServices());
     const handleReviews = () => setReviews(getStoredReviews());
     const handleContacts = () => setContacts(getStoredContacts());
+    const handleFaqs = () => setFaqs(getStoredFaqs());
 
     window.addEventListener("portfolio_updated", handlePortfolio);
     window.addEventListener("services_updated", handleServices);
     window.addEventListener("reviews_updated", handleReviews);
     window.addEventListener("contacts_updated", handleContacts);
+    window.addEventListener("faqs_updated", handleFaqs);
 
     return () => {
       window.removeEventListener("portfolio_updated", handlePortfolio);
       window.removeEventListener("services_updated", handleServices);
       window.removeEventListener("reviews_updated", handleReviews);
       window.removeEventListener("contacts_updated", handleContacts);
+      window.removeEventListener("faqs_updated", handleFaqs);
     };
   }, []);
 
@@ -166,6 +183,10 @@ export default function AdminPage() {
   const updateContacts = (data: ContactLead[]) => {
     setContacts(data);
     saveStoredContacts(data);
+  };
+  const updateFaqs = (data: Faq[]) => {
+    setFaqs(data);
+    saveStoredFaqs(data);
   };
 
   // Delete Confirmation Modal State
@@ -640,6 +661,106 @@ export default function AdminPage() {
     });
   }, [contacts, contactStatusFilter, contactTypeFilter, contactSearch]);
 
+  // 5. FAQS
+  const [faqSearch, setFaqSearch] = useState("");
+  const [faqStatusFilter, setFaqStatusFilter] = useState<"All" | "Published" | "Draft">("All");
+  const [isFaqModalOpen, setIsFaqModalOpen] = useState(false);
+  const [editingFaq, setEditingFaq] = useState<Faq | null>(null);
+  const [faqForm, setFaqForm] = useState({
+    question: "",
+    answer: "",
+    orderIndex: 0,
+    status: "Published" as "Published" | "Draft",
+  });
+
+  const handleOpenAddFaq = () => {
+    setEditingFaq(null);
+    setFaqForm({
+      question: "",
+      answer: "",
+      orderIndex: faqs.length + 1,
+      status: "Published",
+    });
+    setIsFaqModalOpen(true);
+  };
+
+  const handleOpenEditFaq = (f: Faq) => {
+    setEditingFaq(f);
+    setFaqForm({
+      question: f.question,
+      answer: f.answer,
+      orderIndex: f.orderIndex || 0,
+      status: (f.status as "Published" | "Draft") || "Published",
+    });
+    setIsFaqModalOpen(true);
+  };
+
+  const handleSaveFaq = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!faqForm.question.trim() || !faqForm.answer.trim()) {
+      alert("Please fill in question and answer.");
+      return;
+    }
+
+    if (editingFaq) {
+      const updatedItem: Faq = {
+        ...editingFaq,
+        question: faqForm.question.trim(),
+        answer: faqForm.answer.trim(),
+        orderIndex: Number(faqForm.orderIndex) || 0,
+        status: faqForm.status,
+      };
+      const updated = faqs.map((f) => (f.id === editingFaq.id ? updatedItem : f));
+      updateFaqs(updated);
+      updateFaq(updatedItem).catch(console.error);
+    } else {
+      const newFaqData = {
+        question: faqForm.question.trim(),
+        answer: faqForm.answer.trim(),
+        orderIndex: Number(faqForm.orderIndex) || 0,
+        status: faqForm.status,
+      };
+      createFaq(newFaqData)
+        .then((created) => {
+          setFaqs((prev) => [...prev.filter((f) => f.id !== created.id), created]);
+        })
+        .catch(console.error);
+    }
+    setIsFaqModalOpen(false);
+  };
+
+  const handleToggleFaqStatus = (faq: Faq) => {
+    const newStatus: "Published" | "Draft" = faq.status === "Published" ? "Draft" : "Published";
+    const updatedItem: Faq = { ...faq, status: newStatus };
+    const updated = faqs.map((f) => (f.id === faq.id ? updatedItem : f));
+    updateFaqs(updated);
+    updateFaq(updatedItem).catch(console.error);
+  };
+
+  const handleDeleteFaq = (faq: Faq) => {
+    confirmDelete(
+      "Delete FAQ",
+      `Are you sure you want to delete this FAQ question? This action cannot be undone.`,
+      () => {
+        updateFaqs(faqs.filter((f) => f.id !== faq.id));
+        deleteFaq(faq.id).catch(console.error);
+      },
+      faq.question
+    );
+  };
+
+  const filteredFaqs = useMemo(() => {
+    return faqs
+      .filter((f) => {
+        const matchStatus = faqStatusFilter === "All" || f.status === faqStatusFilter;
+        const matchSearch =
+          f.question.toLowerCase().includes(faqSearch.toLowerCase()) ||
+          f.answer.toLowerCase().includes(faqSearch.toLowerCase());
+        return matchStatus && matchSearch;
+      })
+      .sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+  }, [faqs, faqStatusFilter, faqSearch]);
+
   const unreadContactCount = useMemo(() => {
     return contacts.filter((c) => c.status === "New").length;
   }, [contacts]);
@@ -807,6 +928,23 @@ export default function AdminPage() {
                 <span>Contact Us</span>
               </div>
             </button>
+
+            {/* 6. FAQs Navigation */}
+            <button
+              onClick={() => {
+                setActiveTab("faqs");
+                setMobileSidebarOpen(false);
+              }}
+              className={`w-full flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition-all ${activeTab === "faqs"
+                ? "bg-red-600 text-white font-semibold shadow-sm shadow-red-600/20"
+                : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
+                }`}
+            >
+              <div className="flex items-center space-x-3">
+                <HelpCircle className="w-4.5 h-4.5" />
+                <span>FAQs</span>
+              </div>
+            </button>
           </nav>
         </div>
 
@@ -868,7 +1006,9 @@ export default function AdminPage() {
                       ? "Client Reviews & Testimonials"
                       : activeTab === "portfolio"
                         ? "Portfolio Projects & Showcase"
-                        : "Contact Inquiries & Leads"}
+                        : activeTab === "contact"
+                          ? "Contact Inquiries & Leads"
+                          : "Frequently Asked Questions"}
               </h1>
             </div>
           </div>
@@ -1637,6 +1777,112 @@ export default function AdminPage() {
               </div>
             </div>
           )}
+
+          {/* ======================================================== */}
+          {/* TAB 6: FAQS MANAGEMENT                                  */}
+          {/* ======================================================== */}
+          {activeTab === "faqs" && (
+            <div className="space-y-4">
+              {/* Header Filters & Add */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1 max-w-xl">
+                  <div className="relative flex-1">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={faqSearch}
+                      onChange={(e) => setFaqSearch(e.target.value)}
+                      placeholder="Search questions or answers..."
+                      className="w-full bg-slate-50 border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:bg-white pl-9 pr-3.5 py-2 rounded-lg text-xs md:text-sm font-medium outline-none focus:outline-none focus:ring-0 focus:border-red-500 transition-all"
+                    />
+                  </div>
+
+                  {/* Status Filter */}
+                  <select
+                    value={faqStatusFilter}
+                    onChange={(e) => setFaqStatusFilter(e.target.value as any)}
+                    aria-label="Filter FAQs by publication status"
+                    className="bg-slate-50 border border-slate-300 text-slate-700 py-2 px-3 rounded-lg text-xs md:text-sm font-semibold outline-none focus:border-red-500"
+                  >
+                    <option value="All">All Statuses ({faqs.length})</option>
+                    <option value="Published">Published ({faqs.filter((f) => f.status === "Published").length})</option>
+                    <option value="Draft">Draft ({faqs.filter((f) => f.status === "Draft").length})</option>
+                  </select>
+                </div>
+
+                <button
+                  onClick={handleOpenAddFaq}
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all shadow-sm"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add FAQ</span>
+                </button>
+              </div>
+
+              {/* FAQs List */}
+              <div className="space-y-3">
+                {filteredFaqs.map((faq, index) => (
+                  <div
+                    key={faq.id}
+                    className={`${theme.bgCard} rounded-xl p-4.5 ${theme.bgCardHover} transition-all border space-y-3`}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="space-y-1.5 flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded">
+                            #{faq.orderIndex ?? index + 1}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleFaqStatus(faq)}
+                            className={`text-[11px] font-bold uppercase px-2 py-0.5 rounded cursor-pointer transition-colors ${
+                              faq.status === "Published"
+                                ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
+                                : "bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200"
+                            }`}
+                            title={`Click to switch to ${faq.status === "Published" ? "Draft" : "Published"}`}
+                          >
+                            {faq.status}
+                          </button>
+                        </div>
+                        <h4 className="text-sm md:text-base font-bold text-slate-900">
+                          {faq.question}
+                        </h4>
+                        <p className="text-xs md:text-sm text-slate-600 leading-relaxed font-normal">
+                          {faq.answer}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center space-x-1.5 shrink-0 pt-1">
+                        <button
+                          onClick={() => handleOpenEditFaq(faq)}
+                          className="p-1.5 rounded-lg border transition-colors text-slate-600 hover:text-slate-900 bg-slate-50 border-slate-300 hover:bg-slate-100"
+                          title="Edit FAQ"
+                        >
+                          <Edit3 className="w-3.5 h-3.5 text-blue-600" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteFaq(faq)}
+                          className="p-1.5 text-rose-700 hover:bg-rose-100 bg-rose-50 border border-rose-200 rounded-lg transition-colors"
+                          title="Delete FAQ"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {filteredFaqs.length === 0 && (
+                <div className={`p-8 text-center ${theme.bgCard} rounded-xl border`}>
+                  <HelpCircle className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                  <p className="text-sm font-bold text-slate-900">No FAQs found</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Try another search or click &quot;Add FAQ&quot; to create one.</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -2343,6 +2589,101 @@ export default function AdminPage() {
                 </a>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL: ADD / EDIT FAQ                                    */}
+      {/* ======================================================== */}
+      {isFaqModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="bg-white border border-slate-200 rounded-xl w-full max-w-lg p-5 md:p-6 space-y-4 shadow-xl">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <h3 className="text-base font-bold text-slate-900">
+                {editingFaq ? "Edit FAQ" : "Add New FAQ"}
+              </h3>
+              <button
+                onClick={() => setIsFaqModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveFaq} className="space-y-3.5">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  Question *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={faqForm.question}
+                  onChange={(e) => setFaqForm({ ...faqForm, question: e.target.value })}
+                  placeholder="e.g. What services do you offer?"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 px-3 py-2 rounded-lg text-xs md:text-sm font-medium outline-none focus:border-red-500 focus:bg-white transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  Answer *
+                </label>
+                <textarea
+                  required
+                  rows={4}
+                  value={faqForm.answer}
+                  onChange={(e) => setFaqForm({ ...faqForm, answer: e.target.value })}
+                  placeholder="Provide a clear, helpful response..."
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 px-3 py-2 rounded-lg text-xs md:text-sm font-medium outline-none focus:border-red-500 focus:bg-white transition-all resize-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    Display Order
+                  </label>
+                  <input
+                    type="number"
+                    value={faqForm.orderIndex}
+                    onChange={(e) => setFaqForm({ ...faqForm, orderIndex: parseInt(e.target.value) || 0 })}
+                    className="w-full bg-slate-50 border border-slate-300 text-slate-900 px-3 py-2 rounded-lg text-xs md:text-sm font-medium outline-none focus:border-red-500 focus:bg-white transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    Status
+                  </label>
+                  <select
+                    value={faqForm.status}
+                    onChange={(e) => setFaqForm({ ...faqForm, status: e.target.value as "Published" | "Draft" })}
+                    className="w-full bg-slate-50 border border-slate-300 text-slate-700 px-3 py-2 rounded-lg text-xs md:text-sm font-semibold outline-none focus:border-red-500"
+                  >
+                    <option value="Published">Published (Live)</option>
+                    <option value="Draft">Draft (Hidden)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-slate-200 flex items-center justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setIsFaqModalOpen(false)}
+                  className="px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-xs font-semibold bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all shadow-sm"
+                >
+                  {editingFaq ? "Save Changes" : "Create FAQ"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

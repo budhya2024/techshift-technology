@@ -17,10 +17,10 @@ import {
 /* ─────────────────────────── Data ─────────────────────────── */
 
 const stats = [
-    { label: "Products Shipped", value: "200+" },
-    { label: "Client Retention Rate", value: "93%" },
-    { label: "Client Revenue Generated", value: "$200M+" },
-    { label: "Customer Satisfaction Score", value: "95%" },
+    { label: "Projects Delivered", value: "150+" },
+    { label: "Client Retention Rate", value: "94%" },
+    { label: "Cost Savings for Clients", value: "40%+" },
+    { label: "Customer Satisfaction Score", value: "98%" },
 ];
 
 const industries = [
@@ -81,15 +81,15 @@ export default function AboutContent() {
                                 </span>
                             </h2>
                             <p className="tracking-wide leading-relaxed md:leading-loose">
-                                TechShift was founded with a simple belief: great businesses are built when strategy, design, technology, and operations work together - not in silos. Over the years, we&apos;ve partnered with startups, growing companies, and established enterprises to turn ambitious ideas into scalable digital products that generate real revenue.
+                                TechShift was founded with a simple belief: great businesses are built when strategy, design, technology, and operations work together - not in silos. Over the years, we&apos;ve partnered with startups, growing companies, and established enterprises to turn ambitious ideas into scalable digital products with low-cost, high-efficiency development that drives real business growth.
                             </p>
 
                             <p className="tracking-wide leading-relaxed md:leading-loose">
-                                Our work spans product design, software engineering, AI-driven solutions, digital marketing, and accounting support - all aligned toward helping businesses grow sustainably, operate efficiently, and compete at the highest level.
+                                Our work spans product design, software engineering, AI-driven solutions, and digital marketing - all engineered to provide enterprise-grade quality at accessible, low pricing so businesses can scale affordably without excessive overhead.
                             </p>
 
                             <p className="tracking-wide leading-relaxed md:leading-loose">
-                                We don&apos;t chase trends or build for vanity. Every decision is rooted in long-term value, technical soundness, and real-world business impact. When you partner with TechShift, you get a team that thinks in systems - not silos.
+                                We don&apos;t chase inflated numbers or build for vanity. Every decision is rooted in real-world business impact, technical soundness, and honest, transparent pricing. When you partner with TechShift, you get a dedicated team that delivers maximum value for your budget.
                             </p>
 
                             <div className="border-l-2 border-red-500 pl-5 py-3.5 my-6 text-gray-200 text-sm md:text-base italic bg-[#0c1118]/80 rounded-r">

@@ -2,11 +2,10 @@
   "name": "techshift-technology",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "NODE_OPTIONS='--no-network-family-autoselection' next dev",
-    "build": "NODE_OPTIONS='--no-network-family-autoselection' next build",
-    "start": "NODE_OPTIONS='--no-network-family-autoselection' next start",
-    "admin": "NODE_OPTIONS='--no-network-family-autoselection' node --env-file=.env.local scripts/manage-admin.mjs",
+ "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {

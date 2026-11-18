@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { addContactLead } from "@/lib/contactStore";
+import { getPublishedFaqs, fetchFaqs, Faq } from "@/lib/faqStore";
 import {
     Accordion,
     AccordionContent,
@@ -10,40 +11,8 @@ import {
 } from "@/components/ui/accordion";
 import CountryPhoneInput from "@/components/ui/CountryPhoneInput";
 
-const faqs = [
-    {
-        question: "What services does Techshift Technology offer?",
-        answer:
-            "We offer a comprehensive range of digital services including mobile app development, web development, digital marketing, e-commerce solutions, UI/UX design, and performance optimization.",
-    },
-    {
-        question: "How long does it take to complete a project?",
-        answer:
-            "Project timelines vary depending on complexity and scope. Typically, web development projects take 2-6 weeks, mobile apps take 4-12 weeks, and digital marketing campaigns can be launched within 1-2 weeks.",
-    },
-    {
-        question: "Do you provide ongoing support after project completion?",
-        answer:
-            "Yes, we provide comprehensive post-launch support including maintenance, updates, hosting support, and technical assistance to ensure your digital solution continues to perform optimally.",
-    },
-    {
-        question: "What is your pricing structure?",
-        answer:
-            "Our pricing varies based on project requirements. We offer competitive rates starting from $1,500 for digital marketing, $3,000 for branding, $5,000 for web development, and $8,000 for e-commerce solutions.",
-    },
-    {
-        question: "Can you help with SEO and digital marketing?",
-        answer:
-            "Absolutely! We specialize in SEO optimization, Google Ads management, social media marketing, and comprehensive digital marketing strategies to help increase your online visibility and drive conversions.",
-    },
-    {
-        question: "Do you work with businesses of all sizes?",
-        answer:
-            "Yes, we work with businesses of all sizes — from startups and small businesses to large enterprises. We tailor our solutions to meet the specific needs and budget of each client.",
-    },
-];
-
 export default function FaqSection() {
+    const [faqsList, setFaqsList] = useState<Faq[]>([]);
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -52,6 +21,27 @@ export default function FaqSection() {
     });
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setFaqsList(getPublishedFaqs());
+        fetchFaqs("Published").then((res) => {
+            if (Array.isArray(res)) {
+                setFaqsList(res.filter((f) => f.status === "Published"));
+            }
+        });
+
+        const handleUpdate = () => {
+            setFaqsList(getPublishedFaqs());
+            fetchFaqs("Published").then((res) => {
+                if (Array.isArray(res)) {
+                    setFaqsList(res.filter((f) => f.status === "Published"));
+                }
+            });
+        };
+
+        window.addEventListener("faqs_updated", handleUpdate);
+        return () => window.removeEventListener("faqs_updated", handleUpdate);
+    }, []);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -98,23 +88,29 @@ export default function FaqSection() {
 
                     {/* LEFT — FAQ Accordion */}
                     <div>
-                        <Accordion type="single" collapsible className="space-y-4">
-                            {faqs.map((faq, index) => (
-                                <AccordionItem
-                                    key={index}
-                                    value={`item-${index}`}
-                                    className="bg-card border border-border/80 hover:border-red-500/50 rounded-sm px-6 py-1 transition-colors duration-300"
-                                >
-                                    <AccordionTrigger className="text-left text-base sm:text-lg font-bold text-foreground hover:text-red-500 transition-colors duration-300 hover:no-underline py-5">
-                                        {faq.question}
-                                    </AccordionTrigger>
+                        {faqsList.length > 0 ? (
+                            <Accordion type="single" collapsible className="space-y-4">
+                                {faqsList.map((faq, index) => (
+                                    <AccordionItem
+                                        key={faq.id || index}
+                                        value={`item-${faq.id || index}`}
+                                        className="bg-card border border-border/80 hover:border-red-500/50 rounded-sm px-6 py-1 transition-colors duration-300"
+                                    >
+                                        <AccordionTrigger className="text-left text-base sm:text-lg font-bold text-foreground hover:text-red-500 transition-colors duration-300 hover:no-underline py-5">
+                                            {faq.question}
+                                        </AccordionTrigger>
 
-                                    <AccordionContent className="text-muted-foreground text-sm sm:text-base pb-5 leading-relaxed">
-                                        {faq.answer}
-                                    </AccordionContent>
-                                </AccordionItem>
-                            ))}
-                        </Accordion>
+                                        <AccordionContent className="text-muted-foreground text-sm sm:text-base pb-5 leading-relaxed">
+                                            {faq.answer}
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                ))}
+                            </Accordion>
+                        ) : (
+                            <div className="bg-card border border-border/80 rounded-sm p-8 text-center text-muted-foreground">
+                                <p className="text-base font-medium">Have questions? Submit your inquiry using the form, and our engineering team will assist you.</p>
+                            </div>
+                        )}
                     </div>
 
                     {/* RIGHT — Question Form */}

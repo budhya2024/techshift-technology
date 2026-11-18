@@ -57,20 +57,11 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md relative z-10">
         {/* Brand Header */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-4 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-600 to-red-500 flex items-center justify-center text-white shadow-lg shadow-red-600/30 group-hover:scale-105 transition-transform">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <span className="text-xl font-bold tracking-tight text-white">
-              Techshift <span className="text-red-500">Admin</span>
-            </span>
-          </Link>
+
           <h1 className="text-2xl font-bold text-white tracking-tight">
             Administrator Sign In
           </h1>
-          <p className="text-xs text-slate-400 mt-1.5">
-            Internal administrative access only. Public registration is strictly disabled.
-          </p>
+
         </div>
 
         {/* Card */}
@@ -149,16 +140,6 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          {/* Footer details */}
-          <div className="mt-6 pt-5 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
-            <span className="flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-red-500" />
-              Secured by Neon Auth
-            </span>
-            <Link href="/" className="hover:text-slate-300 transition-colors">
-              Return to Website
-            </Link>
-          </div>
         </div>
       </div>
     </div>
