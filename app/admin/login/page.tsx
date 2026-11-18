@@ -57,11 +57,9 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md relative z-10">
         {/* Brand Header */}
         <div className="text-center mb-8">
-
           <h1 className="text-2xl font-bold text-white tracking-tight">
             Administrator Sign In
           </h1>
-
         </div>
 
         {/* Card */}
@@ -139,7 +137,6 @@ export default function AdminLoginPage() {
               )}
             </button>
           </form>
-
         </div>
       </div>
     </div>

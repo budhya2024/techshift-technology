@@ -2,10 +2,11 @@
   "name": "techshift-technology",
   "version": "0.1.0",
   "private": true,
- "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+  "scripts": {
+    "dev": "cross-env NODE_OPTIONS=--no-network-family-autoselection next dev",
+    "build": "cross-env NODE_OPTIONS=--no-network-family-autoselection next build",
+    "start": "cross-env NODE_OPTIONS=--no-network-family-autoselection next start",
+    "admin": "cross-env NODE_OPTIONS=--no-network-family-autoselection node --env-file=.env.local scripts/manage-admin.mjs",
     "lint": "eslint"
   },
   "dependencies": {
@@ -35,10 +36,16 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.5.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.7",
     "postcss": "^8.5.15",
     "tailwindcss": "^4.3.0",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@neon/auth": {
+      "@better-fetch/fetch": "1.3.3"
+    }
   }
 }
